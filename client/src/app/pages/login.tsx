@@ -1,4 +1,62 @@
+import { useState } from 'react';
 import { RiAiGenerate } from 'react-icons/ri';
+
+const LoginForm = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log('Email:', email);
+    console.log('Password:', password);
+
+    try {
+      const response = await fetch('http://localhost:8000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Login successful:', data);
+      } else {
+        console.error('Failed to login:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Failed to login:', error);
+    }
+  };
+
+  return (
+    <form className="flex w-full flex-col space-y-4" onSubmit={handleSubmit}>
+      <input
+        type="email"
+        placeholder="Email"
+        className="rounded border border-gray-200 p-2"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        name="email" // Add name attribute for FormData
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        className="rounded border border-gray-200 p-2"
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+        name="password" // Add name attribute for FormData
+      />
+      <button
+        type="submit"
+        className="rounded bg-orange-400 p-2 text-white hover:bg-orange-500"
+      >
+        Login
+      </button>
+    </form>
+  );
+};
 
 function LoginPage() {
   return (
@@ -10,7 +68,7 @@ function LoginPage() {
         </div>
       </div>
       <div className="flex w-full max-w-sm items-center justify-center">
-        {/* <LoginForm /> */}
+        <LoginForm />
       </div>
 
       <a href="/forgot-password" className="mt-4 text-sm hover:underline">
@@ -27,7 +85,7 @@ function LoginPage() {
           Terms
         </a>{' '}
         &{' '}
-        <a href={'/prviacy-policy'} className="underline hover:cursor-pointer">
+        <a href={'/privacy-policy'} className="underline hover:cursor-pointer">
           Privacy
         </a>
         .
