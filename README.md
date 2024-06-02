@@ -61,4 +61,4 @@ After pulling the image, run a container
 docker run --name itsecwb -e MYSQL_ROOT_PASSWORD=12345 -p 3306:3306 -d mysql:8.0-debian
 ```
 
-Copy the `db.js` file from the server directory and run it to initialize the database
+Copy the `dump.sql` file from the server directory and run it in mysql workbench to initialize the database
