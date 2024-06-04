@@ -20,6 +20,7 @@
 
 - Colors - Colors for logging
 - mysql2 - connect to mysql
+- [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme) - Password hashing
 
 ## Instructions
 
