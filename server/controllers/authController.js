@@ -12,9 +12,6 @@ export const login = async (req, res, next) => {
       req.body.email,
     ]);
 
-    // log the first row of the result
-    console.log(rows[0]);
-
     // If no rows are found, return an error
     if (rows.length === 0) {
       const error = new Error("Invalid email or password");
@@ -75,7 +72,8 @@ export const register = async (req, res, next) => {
 
     res.status(201).json({ message: "User registered successfully", user });
   } catch (err) {
-    const error = new Error("An error occurred while processing your request");
+    const error = new Error(err.message);
+    error.status = 400;
     return next(error);
   }
 };

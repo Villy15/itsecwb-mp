@@ -1,6 +1,6 @@
 CREATE DATABASE  IF NOT EXISTS `itsecwb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `itsecwb`;
--- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for macos14 (arm64)
 --
 -- Host: 127.0.0.1    Database: itsecwb
 -- ------------------------------------------------------
@@ -28,14 +28,16 @@ CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` varchar(50) NOT NULL,
+  `role` varchar(50) NOT NULL DEFAULT 'guest',
   `first_name` varchar(50) DEFAULT NULL,
   `last_name` varchar(50) DEFAULT NULL,
   `photo_url` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `enable` tinyint(1) DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email_UNIQUE` (`email`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +46,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'john.doe@example.com','password123','admin','John','Doe','http://example.com/photo.jpg','2023-05-30 12:00:00',1),(2,'jane.smith@example.com','password456','user','Jane','Smith','http://example.com/photo.jpg','2023-05-30 12:30:00',1),(3,'alice.jones@example.com','password789','moderator','Alice','Jones','http://example.com/photo.jpg','2023-05-30 13:00:00',1),(4,'bob.brown@example.com','password101','user','Bob','Brown','http://example.com/photo.jpg','2023-05-30 13:30:00',1),(5,'charlie.wilson@example.com','password202','guest','Charlie','Wilson','http://example.com/photo.jpg','2023-05-30 14:00:00',0),(6,'adrianvill07@gmail.com','Villastig123','guest','Adrian','Villanueva','http://example.com/photo.jpg','2024-06-01 12:51:00',1);
+INSERT INTO `users` VALUES (1,'adrianvill07@gmail.com','$2b$10$d8jkRku3UOg80uHfK4IVLuUJD7y8r/yHaek5UnBIP5vrLod3oLKB.','guest','Adriannnn','Villanuevaaa','http://example.com/photo.jpg','2024-06-07 03:23:59',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -57,4 +59,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-02 14:57:10
+-- Dump completed on 2024-06-07 11:28:18
