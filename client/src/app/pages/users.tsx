@@ -63,7 +63,13 @@ function UsersPage() {
             <td className="whitespace-nowrap px-6 py-4">{user.role}</td>
             <td className="whitespace-nowrap px-6 py-4">{user.first_name}</td>
             <td className="whitespace-nowrap px-6 py-4">{user.last_name}</td>
-            <td className="whitespace-nowrap px-6 py-4">{user.photo_url}</td>
+            <td className="whitespace-nowrap px-6 py-4">
+              <img
+                className="h-10 w-10 rounded-full"
+                src={user.photo_url || ''}
+                alt={user.photo_url || 'user-photo'}
+              />
+            </td>
             <td className="whitespace-nowrap px-6 py-4">{user.phone}</td>
             <td className="whitespace-nowrap px-6 py-4">{user.created_at}</td>
             <td className="whitespace-nowrap px-6 py-4">{user.enable}</td>

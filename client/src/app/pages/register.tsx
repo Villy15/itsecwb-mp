@@ -40,8 +40,8 @@ const RegisterForm = () => {
         alert('register successful');
       } else if (response.status === 400) {
         const data = await response.json();
-        console.error('Error: ', data.msg);
-        alert(data.msg);
+        console.error('Error: ', data.message);
+        alert(data.message);
       }
     } catch (error) {
       console.error('Failed to login:', error);
