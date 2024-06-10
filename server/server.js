@@ -4,12 +4,17 @@
 
 import cors from "cors";
 import express from "express";
+import path from "path";
+
+// Import dirname
+import { __dirname } from "./utils/dirname.js";
 
 // Import routes
 import auth from "./routes/auth.js";
 import users from "./routes/users.js";
 
 // Import middleware
+import fileUpload from "express-fileupload";
 import errorHandler from "./middleware/error.js";
 import logger from "./middleware/logger.js";
 import notFound from "./middleware/not-found.js";
@@ -17,13 +22,16 @@ import notFound from "./middleware/not-found.js";
 const port = process.env.PORT || 5000;
 const app = express();
 
-console.log("Port ", process.env.PORT);
-
 // Middlewares
 app.use(cors());
 app.use(express.json()); // Able to send JSON data
 app.use(express.urlencoded({ extended: true })); // Able to send form data
 app.use(logger);
+
+// Static folder
+app.use("/assets", express.static(path.join(__dirname, "assets")));
+
+app.use(fileUpload());
 
 // Health check
 app.get("/api", (req, res) => {

@@ -1,6 +1,7 @@
 import { RouterProvider } from 'react-router-dom';
 
 import MainLayout from '@/components/layouts/main-layout';
+import { TailwindIndicator } from '@/components/tailwind-indicator';
 
 import AppProvider from './main-provider';
 import { router } from './routes';
@@ -14,6 +15,7 @@ function App() {
     <AppProvider>
       <MainLayout>
         <AppRouter />
+        <TailwindIndicator />
       </MainLayout>
     </AppProvider>
   );

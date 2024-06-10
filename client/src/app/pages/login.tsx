@@ -22,8 +22,10 @@ const LoginForm = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Login successful:', data);
+        alert('Login successful');
       } else {
         console.error('Failed to login:', response.statusText);
+        alert('Failed to login');
       }
     } catch (error) {
       console.error('Failed to login:', error);
@@ -71,10 +73,10 @@ function LoginPage() {
         <LoginForm />
       </div>
 
-      <a href="/forgot-password" className="mt-4 text-sm hover:underline">
+      {/* <a href="/forgot-password" className="mt-4 text-sm hover:underline">
         Forgot your password?
-      </a>
-      <div className="mt-8 max-w-sm text-xs font-light">
+      </a> */}
+      {/* <div className="mt-8 max-w-sm text-xs font-light">
         Secure Login with reCAPTCHA subject to Google
       </div>
       <div className="text-xs font-light">
@@ -89,8 +91,8 @@ function LoginPage() {
           Privacy
         </a>
         .
-      </div>
-      <a href="/register" className="mt-8 text-sm hover:underline">
+      </div> */}
+      <a href="/register" className="mt-4 text-sm hover:underline">
         Create an account?
       </a>
     </div>

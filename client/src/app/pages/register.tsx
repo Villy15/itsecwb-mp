@@ -10,34 +10,59 @@ const RegisterForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // File
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Email:', email);
-    console.log('Password:', password);
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/login', {
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('first_name', firstName);
+      formData.append('last_name', lastName);
+      formData.append('phone', phone);
+      if (fileInputRef.current?.files) {
+        formData.append('photo_url', fileInputRef.current.files[0]);
+      }
+
+      const response = await fetch('http://localhost:8000/api/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+        body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Login successful:', data);
-      } else {
-        console.error('Failed to login:', response.statusText);
+        console.log('Register successful:', data);
+        alert('register successful');
+      } else if (response.status === 400) {
+        const data = await response.json();
+        console.error('Error: ', data.msg);
+        alert(data.msg);
       }
     } catch (error) {
       console.error('Failed to login:', error);
     }
   };
 
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : null;
+    setSelectedFile(file);
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   return (
     <form className="flex w-full flex-col space-y-4" onSubmit={handleSubmit}>
-      <UploadAvatar />
+      <UploadAvatar
+        handleFileSelect={handleFileSelect}
+        fileInputRef={fileInputRef}
+        previewUrl={previewUrl}
+      />
 
       <input
         type="text"
@@ -45,7 +70,7 @@ const RegisterForm = () => {
         className="rounded border border-gray-200 p-2"
         value={firstName}
         onChange={e => setFirstName(e.target.value)}
-        name="firstName" // Add name attribute for FormData
+        name="firstName"
       />
       <input
         type="text"
@@ -53,7 +78,7 @@ const RegisterForm = () => {
         className="rounded border border-gray-200 p-2"
         value={lastName}
         onChange={e => setLastName(e.target.value)}
-        name="lastName" // Add name attribute for FormData
+        name="lastName"
       />
       <input
         type="text"
@@ -61,7 +86,7 @@ const RegisterForm = () => {
         className="rounded border border-gray-200 p-2"
         value={phone}
         onChange={e => setPhone(e.target.value)}
-        name="phone" // Add name attribute for FormData
+        name="phone"
       />
       <input
         type="email"
@@ -69,7 +94,7 @@ const RegisterForm = () => {
         className="rounded border border-gray-200 p-2"
         value={email}
         onChange={e => setEmail(e.target.value)}
-        name="email" // Add name attribute for FormData
+        name="email"
       />
       <input
         type="password"
@@ -77,7 +102,7 @@ const RegisterForm = () => {
         className="rounded border border-gray-200 p-2"
         value={password}
         onChange={e => setPassword(e.target.value)}
-        name="password" // Add name attribute for FormData
+        name="password"
       />
       <button
         type="submit"
@@ -89,20 +114,15 @@ const RegisterForm = () => {
   );
 };
 
-const UploadAvatar = () => {
-  // Add this to your component
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files ? event.target.files[0] : null;
-    setSelectedFile(file);
-    if (file) {
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
+const UploadAvatar = ({
+  handleFileSelect,
+  fileInputRef,
+  previewUrl,
+}: {
+  handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  fileInputRef: React.RefObject<HTMLInputElement>;
+  previewUrl: string | null;
+}) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div
@@ -144,10 +164,10 @@ function RegisterPage() {
       <a href="/login" className="mt-8 text-sm hover:underline">
         Go back to Login
       </a>
-      <div className="mt-8 max-w-sm text-center text-xs font-light">
+      {/* <div className="mt-8 max-w-sm text-center text-xs font-light">
         By creating an account, you agree to our Terms of Service and have read
         and understood the Privacy Policy
-      </div>
+      </div> */}
     </div>
   );
 }

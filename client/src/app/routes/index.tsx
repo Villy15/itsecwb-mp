@@ -1,6 +1,7 @@
 import HomePage from '../pages/home';
 import LoginPage from '../pages/login';
 import RegisterPage from '../pages/register';
+import UsersPage from '../pages/users';
 import { createBrowserRouter } from 'react-router-dom';
 
 import HomeLayout from '@/components/layouts/home-layout';
@@ -13,6 +14,14 @@ export const router = createBrowserRouter([
     element: (
       <HomeLayout>
         <HomePage />
+      </HomeLayout>
+    ),
+  },
+  {
+    path: '/users',
+    element: (
+      <HomeLayout>
+        <UsersPage />
       </HomeLayout>
     ),
   },

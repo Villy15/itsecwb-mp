@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
+import path from "path";
 import db from "../db.js";
-
+import { __dirname } from "../utils/dirname.js";
 /**
  * @desc Login user
  * @route POST /api/auth/login
@@ -51,15 +52,40 @@ export const login = async (req, res, next) => {
 
 export const register = async (req, res, next) => {
   try {
-    // Hash the password
+    // fromhttps://github.com/richardgirges/express-fileupload/tree/master/example
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send("No files were uploaded.");
+    }
+
+    const photo = req.files.photo_url;
+
+    // Get the upload path
+    const uploadPath = path.join(__dirname, "assets", photo.name);
+
+    // Move the file
+    await photo.mv(uploadPath);
+
+    // Hashes the password
     const hash = await bcrypt.hash(req.body.password, 10);
 
-    // Insert user into database
-    const { email, first_name, last_name, photo_url } = req.body;
+    // Destructures the request body
+    const { email, first_name, last_name, phone } = req.body;
+
+    // Checks if email already exists !! I'm not sure if dapat malaman nila if user already exists
+    const [existingUsers] = await db.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
+
+    if (existingUsers.length > 0) {
+      const error = new Error("Email already exists");
+      error.status = 400;
+      return next(error);
+    }
 
     const [rows] = await db.query(
-      "INSERT INTO users (email, password, first_name, last_name, photo_url) VALUES (?, ?, ?, ?, ?)",
-      [email, hash, first_name, last_name, photo_url]
+      "INSERT INTO users (email, password, first_name, last_name, photo_url, phone) VALUES (?, ?, ?, ?, ?, ?)",
+      [email, hash, first_name, last_name, uploadPath, phone]
     );
 
     const user = {
@@ -67,7 +93,7 @@ export const register = async (req, res, next) => {
       email,
       first_name,
       last_name,
-      photo_url,
+      uploadPath,
     };
 
     res.status(201).json({ message: "User registered successfully", user });
