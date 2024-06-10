@@ -9,7 +9,8 @@ export const getUsers = async (req, res, next) => {
     const [rows] = await db.query("SELECT * FROM users"); // Adjust the query as needed
     res.json(rows);
   } catch (err) {
-    const error = new Error("An error occurred while processing your request");
+    const error = new Error(err.message);
+    error.status = 400;
     return next(error);
   }
 };

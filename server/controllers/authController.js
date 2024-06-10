@@ -55,7 +55,7 @@ export const register = async (req, res, next) => {
     }
 
     // Check if photo is uploaded
-    // fromhttps://github.com/richardgirges/express-fileupload/tree/master/example
+    // from https://github.com/richardgirges/express-fileupload/tree/master/example
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).send("No files were uploaded.");
     }

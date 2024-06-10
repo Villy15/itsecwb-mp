@@ -4,11 +4,62 @@ import { RiAiGenerate } from 'react-icons/ri';
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  /**
+   * Email validation regex
+   * Assumption: The email format would use **prefix@domain**.
+   * - The **prefix** may only contain alphanumeric and special characters (underscores, periods, and dashes only)
+   *  where the special characters must be followed by one or more letter or numbers
+   *
+   * - The **domain** may only contain alphanumeric and hyphens where the hyphens must be followed
+   *  by one or more letter or numbers
+   *
+   * Example:
+   * - Valid:
+   *   - abc-d@mail.com
+   * - Invalid:
+   *   - abc-@mail.c
+   */
+  const emailRegex =
+    /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+
+  /**
+   * Password validation regex
+   * - At least one uppercase letter
+   * - At least one lowercase letter
+   * - At least one number
+   * - At least one special character
+   * - Minimum length of 12 characters
+   * - Maximum length of 64 character
+   *
+   * Example:
+   * - Valid:
+   *   - @n1M0La5A!I3
+   * - Invalid:
+   *   - DLSU1234!
+   */
+  const passwordRegex =
+    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,64}$/;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Email:', email);
-    console.log('Password:', password);
+
+    // Validate email
+    if (!emailRegex.test(email)) {
+      setErrorMessage('Invalid email address');
+      return;
+    }
+
+    if (!passwordRegex.test(password)) {
+      setErrorMessage(
+        'Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be between 12 to 64 characters long'
+      );
+      return;
+    }
+
+    // Reset email error
+    setErrorMessage('');
 
     try {
       const response = await fetch('http://localhost:8000/api/auth/login', {
@@ -56,6 +107,9 @@ const LoginForm = () => {
       >
         Login
       </button>
+      {errorMessage && (
+        <p className="text-center text-red-500">{errorMessage}</p>
+      )}
     </form>
   );
 };
@@ -92,6 +146,7 @@ function LoginPage() {
         </a>
         .
       </div> */}
+
       <a href="/register" className="mt-4 text-sm hover:underline">
         Create an account?
       </a>
