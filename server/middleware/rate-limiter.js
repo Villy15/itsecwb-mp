@@ -30,42 +30,27 @@ const limiterConsecutiveFailsByUsernameAndIP = new RateLimiterMySQL({
 
 // the middleware function
 const rateLimiterMiddleware = (req, res, next) => {
-    // check if the email is present in the request body
-    if (!req.body.email) {
-      return res.status(400).send("Unable to process request.");
-    }
+  // check if the email is present in the request body
+  if (!req.body.email) {
+    return res.status(400).send("Unable to process request.");
+  }
 
-    limiterSlowBruteByIP.consume(req.ip)
-      .then((rateLimiterRes1) => {
-        
-        res.set({
-          'X-RateLimit-Limit-SlowBrute': rateLimiterRes1.totalPoints,
-          'X-RateLimit-Remaining-SlowBrute': rateLimiterRes1.remainingPoints,
-          'X-RateLimit-Reset-SlowBrute': new Date(Date.now() + rateLimiterRes1.msBeforeNext),
-        });
-        return limiterConsecutiveFailsByUsernameAndIP.consume(req.body.email);
-      })
-      .then((rateLimiterRes2) => {
-        console.log(rateLimiterRes2.totalPoints)
-        rateLimiterRes2.totalPoints = maxConsecutiveFailsByUsernameAndIP;
-        res.set({
-          'X-RateLimit-Limit-ConsecutiveFails': rateLimiterRes2.totalPoints,
-          'X-RateLimit-Remaining-ConsecutiveFails': rateLimiterRes2.remainingPoints,
-          'X-RateLimit-Reset-ConsecutiveFails': new Date(Date.now() + rateLimiterRes2.msBeforeNext),
-        });
-        next();
-      })
-      .catch((err) => {
-        console.log(err);
-        console.log(req.body.email)
-        res.status(429).send('Too Many Requests');
+  limiterSlowBruteByIP
+    .consume(req.ip)
+    .then((rateLimiterRes1) => {
+      res.set({
+        "X-RateLimit-Limit-SlowBrute": rateLimiterRes1.totalPoints,
+        "X-RateLimit-Remaining-SlowBrute": rateLimiterRes1.remainingPoints,
+        "X-RateLimit-Reset-SlowBrute": new Date(
+          Date.now() + rateLimiterRes1.msBeforeNext
+        ),
       });
       return limiterConsecutiveFailsByUsernameAndIP.consume(req.body.email);
-    }
+    })
     .then((rateLimiterRes2) => {
-      // Laging undefined yung rateLimiterRes2.totalPoints
-      // console.log(rateLimiterRes2.totalPoints);
       rateLimiterRes2.totalPoints = maxConsecutiveFailsByUsernameAndIP;
+      // console.log(rateLimiterRes2.totalPoints);
+
       res.set({
         "X-RateLimit-Limit-ConsecutiveFails": rateLimiterRes2.totalPoints,
         "X-RateLimit-Remaining-ConsecutiveFails":
@@ -81,5 +66,8 @@ const rateLimiterMiddleware = (req, res, next) => {
       console.log(req.body.email);
       res.status(429).send("Too Many Requests");
     });
+
+  return limiterConsecutiveFailsByUsernameAndIP.consume(req.body.email);
 };
+
 export default rateLimiterMiddleware;
