@@ -44,7 +44,6 @@ const limiterConsecutiveFailsByUsernameAndIP = new RateLimiterMySQL({
 const rateLimiterMiddleware = (req, res, next) => {
     limiterSlowBruteByIP.consume(req.ip)
       .then((rateLimiterRes1) => {
-        console.log(req.body.email);
         
         res.set({
           'X-RateLimit-Limit-SlowBrute': rateLimiterRes1.totalPoints,
@@ -54,6 +53,8 @@ const rateLimiterMiddleware = (req, res, next) => {
         return limiterConsecutiveFailsByUsernameAndIP.consume(req.body.email);
       })
       .then((rateLimiterRes2) => {
+        console.log(rateLimiterRes2.totalPoints)
+        rateLimiterRes2.totalPoints = maxConsecutiveFailsByUsernameAndIP;
         res.set({
           'X-RateLimit-Limit-ConsecutiveFails': rateLimiterRes2.totalPoints,
           'X-RateLimit-Remaining-ConsecutiveFails': rateLimiterRes2.remainingPoints,

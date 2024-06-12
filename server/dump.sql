@@ -45,21 +45,6 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
---
-
-DROP TABLE IF EXISTS `rate_limiter`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `rate_limiter` (
-  `key` varchar(255) NOT NULL,
-  `points` int NOT NULL,
-  `expire` bigint NOT NULL,
-  PRIMARY KEY (`rl_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
-
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES (95,'adrianvill0a7@gmail.com','$2b$10$xPmqTyLPNBosz5aPfo7Nwu8R.TAKQZs81hET94YGcGORGVfoxWW9a','guest','Adrian','Villanueva','http://localhost:8000/assets/AFAC (square).png','09151944467','2024-06-10 10:22:56',1),(96,'adrianvill07@gmail.com','$2b$10$OIyE7u5WBUTdpdsv4FcZ7.tPAT1UtLEuC.RIJczuXkR/htUzG/G9.','guest','Adrian John','Villanueva','http://localhost:8000/assets/AFAC (square).png','123132131','2024-06-10 10:46:19',1);
