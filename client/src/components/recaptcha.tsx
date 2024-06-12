@@ -1,3 +1,6 @@
+/**
+ * Referenced from: https://developers.google.com/recaptcha/docs/display
+ */
 import { useEffect, useRef, useState } from 'react';
 
 declare global {
@@ -7,7 +10,12 @@ declare global {
   }
 }
 
-const ReCaptcha = ({ siteKey, callback }: any) => {
+type ReCaptchaProps = {
+  siteKey: string;
+  callback?: (token: string) => void;
+};
+
+const ReCaptcha = ({ siteKey, callback }: ReCaptchaProps) => {
   const recaptchaRef = useRef(null);
   const [isRecaptchaLoaded, setIsRecaptchaLoaded] = useState(false);
 
@@ -41,10 +49,16 @@ const ReCaptcha = ({ siteKey, callback }: any) => {
 
   useEffect(() => {
     if (isRecaptchaLoaded) {
-      window.grecaptcha.render(recaptchaRef.current, {
-        sitekey: siteKey,
-        callback: callback, // Callback function to handle the token
-      });
+      try {
+        // Check if the reCAPTCHA has already been rendered
+        window.grecaptcha.getResponse();
+      } catch (error) {
+        // If getResponse throws an error, the reCAPTCHA has not been rendered yet
+        window.grecaptcha.render(recaptchaRef.current, {
+          sitekey: siteKey,
+          callback: callback, // Callback function to handle the token
+        });
+      }
     }
   }, [callback, isRecaptchaLoaded, siteKey]);
 

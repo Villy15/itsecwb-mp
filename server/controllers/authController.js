@@ -8,9 +8,35 @@ import { __dirname } from "../utils/dirname.js";
  */
 export const login = async (req, res, next) => {
   try {
+    const { email, password, recaptchaToken } = req.body;
+
+    console.log({
+      email,
+      password,
+      recaptchaToken,
+    });
+
+    if (!recaptchaToken)
+      return res.status(400).json({ message: "Recaptcha token is required" });
+
+    // Check if recaptcha token is valid
+    // FROM https://developers.google.com/recaptcha/docs/verify
+    const captchaResponse = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SITE_KEY_V2}&response=${recaptchaToken}`,
+      {
+        method: "POST",
+      }
+    );
+
+    const captchaData = await captchaResponse.json();
+    console.log(captchaData);
+
+    if (!captchaData.success)
+      return res.status(400).json({ message: "Invalid recaptcha token" });
+
     // Check if email exists
     const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
-      req.body.email,
+      email,
     ]);
 
     // If no rows are found, return an error
@@ -19,7 +45,7 @@ export const login = async (req, res, next) => {
     }
 
     // Check if password is correct
-    const match = await bcrypt.compare(req.body.password, rows[0].password);
+    const match = await bcrypt.compare(password, rows[0].password);
 
     // If password is incorrect, return an error
     if (!match) {
