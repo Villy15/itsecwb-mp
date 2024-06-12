@@ -20,7 +20,10 @@
 
 - Colors - Colors for logging
 - mysql2 - connect to mysql
+- [cors]() - allows server to respond to requests from different origins
 - [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme) - Password hashing
+- [express-fileupload]() - package to upload files
+- [helmet](https://helmetjs.github.io) - helps secure Express apps by setting HTTP response headers.
 
 ## Instructions
 
