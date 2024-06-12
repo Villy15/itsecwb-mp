@@ -9,6 +9,11 @@ import { __dirname } from "../utils/dirname.js";
 export const login = async (req, res, next) => {
   try {
     const { email, password, recaptchaToken } = req.body;
+    console.log({
+      email,
+      password,
+      recaptchaToken,
+    });
 
     if (!recaptchaToken)
       return res.status(400).json({ message: "Recaptcha token is required" });
@@ -24,11 +29,15 @@ export const login = async (req, res, next) => {
 
     const captchaData = await captchaResponse.json();
 
+    console.log(captchaData);
+
     if (!captchaData.success)
-      return res.status(400).json({ message: "Invalid recaptcha token" });
+      return res
+        .status(400)
+        .json({ message: "Invalid recaptcha token", captchaData: captchaData });
 
     // Check if email exists
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
+    const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
 

@@ -53,6 +53,11 @@ Add an env file in the server directory with
 PORT=8000
 ```
 
+## If not docker
+
+Just install mysql 8.0.37 to prevent this error:
+`Error: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client`
+
 ## Initialize mysql using docker container
 
 ```
