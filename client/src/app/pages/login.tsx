@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { RiAiGenerate } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom';
 
 import ReCaptcha from '@/components/recaptcha';
 
@@ -10,7 +11,9 @@ const LoginForm = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [recaptchaToken, setRecaptchaToken] = useState('');
-  const [submitEnabled, setSubmitEnabled] = useState(false);
+  const [submitEnabled, setSubmitEnabled] = useState(true);
+
+  const navigate = useNavigate();
 
   /**
    * Email validation regex
@@ -74,6 +77,7 @@ const LoginForm = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password, recaptchaToken }),
+        credentials: 'include',
       });
 
       if (response.status === 429) {
@@ -85,7 +89,8 @@ const LoginForm = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Login successful:', data);
-        alert('Login successful');
+
+        navigate('/');
       } else {
         console.error('Failed to login:', response.statusText);
         alert('Failed to login');

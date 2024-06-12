@@ -9,32 +9,27 @@ import { __dirname } from "../utils/dirname.js";
 export const login = async (req, res, next) => {
   try {
     const { email, password, recaptchaToken } = req.body;
-    console.log({
-      email,
-      password,
-      recaptchaToken,
-    });
 
-    if (!recaptchaToken)
-      return res.status(400).json({ message: "Recaptcha token is required" });
+    // if (!recaptchaToken)
+    //   return res.status(400).json({ message: "Recaptcha token is required" });
 
     // Check if recaptcha token is valid
     // FROM https://developers.google.com/recaptcha/docs/verify
-    const captchaResponse = await fetch(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SITE_KEY_V2}&response=${recaptchaToken}`,
-      {
-        method: "POST",
-      }
-    );
+    // const captchaResponse = await fetch(
+    //   `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SITE_KEY_V2}&response=${recaptchaToken}`,
+    //   {
+    //     method: "POST",
+    //   }
+    // );
 
-    const captchaData = await captchaResponse.json();
+    // const captchaData = await captchaResponse.json();
 
-    console.log(captchaData);
+    // console.log(captchaData);
 
-    if (!captchaData.success)
-      return res
-        .status(400)
-        .json({ message: "Invalid recaptcha token", captchaData: captchaData });
+    // if (!captchaData.success)
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Invalid recaptcha token", captchaData: captchaData });
 
     // Check if email exists
     const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
@@ -53,6 +48,11 @@ export const login = async (req, res, next) => {
     if (!match) {
       return res.status(404).json({ message: "Invalid email or password" });
     }
+
+    req.session.user = {
+      email: email,
+      admin: rows[0].admin,
+    };
 
     res.status(200).json({ message: "User logged in successfully" });
   } catch (err) {
@@ -104,6 +104,28 @@ export const register = async (req, res, next) => {
     );
 
     res.status(201).json({ message: "User registered successfully" });
+  } catch (err) {
+    const error = new Error(err.message);
+    error.status = 400;
+    return next(error);
+  }
+};
+
+/**
+ * @desc Check authentication
+ * @route POST /api/auth/checkAuth
+ */
+export const checkAuth = async (req, res, next) => {
+  try {
+    if (req.session.user) {
+      return res
+        .status(200)
+        .json({ message: "User is authenticated", authorized: true });
+    }
+
+    return res
+      .status(401)
+      .json({ message: "User is not authenticated", authorized: false });
   } catch (err) {
     const error = new Error(err.message);
     error.status = 400;

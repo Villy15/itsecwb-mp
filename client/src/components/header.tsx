@@ -27,7 +27,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const links = [
   { href: '/', label: 'Dashboard' },
-  { href: '/users', label: 'Users' },
+  { href: '/admin', label: 'Admin' },
   {
     href: '/reports',
     label: 'Reports',

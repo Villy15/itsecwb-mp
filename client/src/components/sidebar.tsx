@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 
 const links = [
   { href: '/', icon: Home, label: 'Dashboard' },
-  { href: '/users', icon: Users, label: 'Users' },
+  { href: '/admin', icon: Users, label: 'Admin' },
   {
     href: '/reports',
     icon: GanttChartSquare,
