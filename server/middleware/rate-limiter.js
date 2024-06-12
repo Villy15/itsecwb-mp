@@ -17,6 +17,7 @@ const rateLimiterMiddleware = (req, res, next) => {
     rateLimiter.consume(req.ip)
         .then((rateLimiterRes) => {
             // setting of headers
+            console.log('this is the ip', req.ip);
             res.set({
                 'Retry-After': rateLimiterRes.msBeforeNext / 1000,
                 'X-RateLimit-Limit': rateLimiterRes.totalPoints,
