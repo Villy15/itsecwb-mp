@@ -24,7 +24,7 @@ const limiterConsecutiveFailsByUsernameAndIP = new RateLimiterMySQL({
   dbName: "itsecwb",
   tableName: "consecutiveFailsByUsernameAndIP",
   duration: 60 * 60 * 24 * 90, // Store number for 90 days
-  blockDuration: 60 * 15, // Block for 15 minutes
+  blockDuration: 60 * 60, // Block for  1 hour
   tableCreated: false,
 });
 
