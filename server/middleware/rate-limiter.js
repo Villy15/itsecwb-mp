@@ -10,7 +10,7 @@ const limiterSlowBruteByIP = new RateLimiterMySQL({
   keyPrefix: "login_fail_ip_per_day",
   points: maxWrongAttemptsByIPperDay,
   dbName: "itsecwb",
-  tableName: "slowBruteByIP",
+  tableName: "slow_brute_by_ip",
   duration: 60 * 60 * 24, // Store number for 1 day
   blockDuration: 60 * 60 * 24, // Block for 1 day
   tableCreated: false,
@@ -22,26 +22,19 @@ const limiterConsecutiveFailsByUsernameAndIP = new RateLimiterMySQL({
   keyPrefix: "login_fail_consecutive_username_and_ip",
   points: maxConsecutiveFailsByUsernameAndIP,
   dbName: "itsecwb",
-  tableName: "consecutiveFailsByUsernameAndIP",
+  tableName: "consecutive_fails_username_and_ip",
   duration: 60 * 60 * 24 * 90, // Store number for 90 days
   blockDuration: 60 * 60, // Block for  1 hour
   tableCreated: false,
 });
 
-
-
-// const rateLimiter = new RateLimiterMySQL({
-//   storeClient: poolForRateLimiter,
-//   points: 5, // 5 requests
-//   duration: 30, // per 1 second by IP
-//   tableName: "rate_limiter",
-//   keyPrefix: "rl_",
-//   dbName: "itsecwb",
-//   tableCreated: true,
-// });
-
 // the middleware function
 const rateLimiterMiddleware = (req, res, next) => {
+    // check if the email is present in the request body
+    if (!req.body.email) {
+      return res.status(400).send("Unable to process request.");
+    }
+
     limiterSlowBruteByIP.consume(req.ip)
       .then((rateLimiterRes1) => {
         
