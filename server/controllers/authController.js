@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import path from "path";
-import db from "../db.js";
+import { pool } from "../db.js";
 import { __dirname } from "../utils/dirname.js";
 /**
  * @desc Login user
@@ -9,7 +9,7 @@ import { __dirname } from "../utils/dirname.js";
 export const login = async (req, res, next) => {
   try {
     // Check if email exists
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
+    const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
       req.body.email,
     ]);
 
@@ -45,7 +45,7 @@ export const register = async (req, res, next) => {
     const { email, first_name, last_name, phone } = req.body;
 
     // Checks if email already exists !! I'm not sure if dapat malaman nila if user already exists
-    const [existingUsers] = await db.query(
+    const [existingUsers] = await pool.query(
       "SELECT * FROM users WHERE email = ?",
       [email]
     );
@@ -70,7 +70,7 @@ export const register = async (req, res, next) => {
     // Hashes the password
     const hash = await bcrypt.hash(req.body.password, 10);
 
-    const [rows] = await db.query(
+    const [rows] = await pool.query(
       "INSERT INTO users (email, password, first_name, last_name, photo_url, phone) VALUES (?, ?, ?, ?, ?, ?)",
       [email, hash, first_name, last_name, photo_url, phone]
     );
