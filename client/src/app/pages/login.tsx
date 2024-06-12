@@ -1,5 +1,4 @@
-import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { RiAiGenerate } from 'react-icons/ri';
 
 import ReCaptcha from '@/components/recaptcha';
@@ -8,9 +7,6 @@ const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  const [recaptchaToken, setRecaptchaToken] = useState('');
-  const [submitEnabled, setSubmitEnabled] = useState(false);
 
   /**
    * Email validation regex
@@ -73,8 +69,14 @@ const LoginForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, recaptchaToken }),
+        body: JSON.stringify({ email, password }),
       });
+
+      if  (response.status === 429) {
+        console.error('Too many requests:', response.statusText);
+        alert('Too many requests');
+
+      }
 
       if (response.ok) {
         const data = await response.json();
@@ -89,56 +91,34 @@ const LoginForm = () => {
     }
   };
 
-  const handleToken = (token: string) => {
-    setRecaptchaToken(token);
-  };
-
-  useEffect(() => {
-    if (recaptchaToken.length > 0) {
-      setSubmitEnabled(true);
-    }
-  }, [recaptchaToken]);
-
   return (
-    <>
-      <form
-        className="mb-4 flex w-full flex-col space-y-4"
-        onSubmit={handleSubmit}
-      >
-        <input
-          type="email"
-          placeholder="Email"
-          className="rounded border border-gray-200 p-2"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          name="email" // Add name attribute for FormData
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="rounded border border-gray-200 p-2"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          name="password" // Add name attribute for FormData
-        />
-        <button
-          disabled={!submitEnabled}
-          type="submit"
-          className={clsx('rounded bg-blue-500 p-2 text-white', {
-            'cursor-not-allowed bg-gray-300': !submitEnabled,
-          })}
-        >
-          Login
-        </button>
-        {errorMessage && (
-          <p className="text-center text-red-500">{errorMessage}</p>
-        )}
-      </form>
-      <ReCaptcha
-        siteKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY_V2}
-        callback={handleToken}
+    <form className="flex w-full flex-col space-y-4" onSubmit={handleSubmit}>
+      <input
+        type="email"
+        placeholder="Email"
+        className="rounded border border-gray-200 p-2"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        name="email" // Add name attribute for FormData
       />
-    </>
+      <input
+        type="password"
+        placeholder="Password"
+        className="rounded border border-gray-200 p-2"
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+        name="password" // Add name attribute for FormData
+      />
+      <button
+        type="submit"
+        className="rounded bg-orange-400 p-2 text-white hover:bg-orange-500"
+      >
+        Login
+      </button>
+      {errorMessage && (
+        <p className="text-center text-red-500">{errorMessage}</p>
+      )}
+    </form>
   );
 };
 
@@ -151,9 +131,13 @@ function LoginPage() {
           Log into Inventory Management Software
         </div>
       </div>
-      <div className="mb-4 flex w-full max-w-sm flex-col items-center justify-center">
+      <div className="mb-4 flex w-full max-w-sm items-center justify-center">
         <LoginForm />
       </div>
+      <ReCaptcha
+        siteKey="6LeSP_YpAAAAAPp5etiqje9UiUZQcZl0dfPNVtuN"
+        callback={console.log}
+      />
 
       <a href="/register" className="mt-4 text-sm hover:underline">
         Create an account?

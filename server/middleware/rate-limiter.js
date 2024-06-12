@@ -1,34 +1,70 @@
 import { RateLimiterMySQL } from "rate-limiter-flexible";
 import { poolForRateLimiter } from "../db.js";
 
-const rateLimiter = new RateLimiterMySQL({
+const maxWrongAttemptsByIPperDay = 100;
+const maxConsecutiveFailsByUsernameAndIP = 10;
+
+// rate limiter by slow brute by IP, only maxWrongAttemptsByIPperDay allowed
+const limiterSlowBruteByIP = new RateLimiterMySQL({
   storeClient: poolForRateLimiter,
-  points: 5, // 5 requests
-  duration: 30, // per 1 second by IP
-  tableName: "rate_limiter",
-  keyPrefix: "rl_",
+  keyPrefix: "login_fail_ip_per_day",
+  points: maxWrongAttemptsByIPperDay,
   dbName: "itsecwb",
-  tableCreated: true,
+  tableName: "slowBruteByIP",
+  duration: 60 * 60 * 24, // Store number for 1 day
+  blockDuration: 60 * 60 * 24, // Block for 1 day
+  tableCreated: false,
 });
+
+// rate limiter to prevent fast login attempts
+const limiterConsecutiveFailsByUsernameAndIP = new RateLimiterMySQL({
+  storeClient: poolForRateLimiter,
+  keyPrefix: "login_fail_consecutive_username_and_ip",
+  points: maxConsecutiveFailsByUsernameAndIP,
+  dbName: "itsecwb",
+  tableName: "consecutiveFailsByUsernameAndIP",
+  duration: 60 * 60 * 24 * 90, // Store number for 90 days
+  blockDuration: 60 * 15, // Block for 15 minutes
+  tableCreated: false,
+});
+
+
+
+// const rateLimiter = new RateLimiterMySQL({
+//   storeClient: poolForRateLimiter,
+//   points: 5, // 5 requests
+//   duration: 30, // per 1 second by IP
+//   tableName: "rate_limiter",
+//   keyPrefix: "rl_",
+//   dbName: "itsecwb",
+//   tableCreated: true,
+// });
 
 // the middleware function
 const rateLimiterMiddleware = (req, res, next) => {
-  rateLimiter
-    .consume(req.ip)
-    .then((rateLimiterRes) => {
-      // setting of headers
-      res.set({
-        "Retry-After": rateLimiterRes.msBeforeNext / 1000,
-        "X-RateLimit-Limit": rateLimiterRes.totalPoints,
-        "X-RateLimit-Remaining": rateLimiterRes.remainingPoints,
-        "X-RateLimit-Reset": new Date(Date.now() + rateLimiterRes.msBeforeNext),
+    limiterSlowBruteByIP.consume(req.ip)
+      .then((rateLimiterRes1) => {
+        console.log(req.body.email);
+        
+        res.set({
+          'X-RateLimit-Limit-SlowBrute': rateLimiterRes1.totalPoints,
+          'X-RateLimit-Remaining-SlowBrute': rateLimiterRes1.remainingPoints,
+          'X-RateLimit-Reset-SlowBrute': new Date(Date.now() + rateLimiterRes1.msBeforeNext),
+        });
+        return limiterConsecutiveFailsByUsernameAndIP.consume(req.body.email);
+      })
+      .then((rateLimiterRes2) => {
+        res.set({
+          'X-RateLimit-Limit-ConsecutiveFails': rateLimiterRes2.totalPoints,
+          'X-RateLimit-Remaining-ConsecutiveFails': rateLimiterRes2.remainingPoints,
+          'X-RateLimit-Reset-ConsecutiveFails': new Date(Date.now() + rateLimiterRes2.msBeforeNext),
+        });
+        next();
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log(req.body.email)
+        res.status(429).send('Too Many Requests');
       });
-      next();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(429).send("Too Many Requests");
-    });
-};
-
+  };
 export default rateLimiterMiddleware;
