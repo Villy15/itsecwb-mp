@@ -24,7 +24,7 @@ export const login = async (req, res, next) => {
     }
 
     // Password regex pattern
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{16,}$/;
 
     if (!passwordRegex.test(password)) {
       return res.status(400).json({ message: "Invalid password format" });
@@ -118,7 +118,7 @@ export const register = async (req, res, next) => {
     }
 
     // Password regex pattern
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{16,}$/;
 
     if (!passwordRegex.test(password)) {
       res.status(400).json({ message: "Invalid password format" });
