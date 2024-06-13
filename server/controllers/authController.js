@@ -137,8 +137,6 @@ export const register = async (req, res, next) => {
     } else if (phoneNumberRegexConvert3.test(phone)) {
       // Convert 9123456789 to 09123456789
       convertedPhone = "0" + phone;
-    } else {
-      convertedPhone = phone;
     }
 
     // Phone number regex pattern (09xxxxxxxxx format)

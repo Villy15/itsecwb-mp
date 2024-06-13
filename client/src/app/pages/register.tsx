@@ -26,7 +26,6 @@ const RegisterForm = () => {
 
   const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
 
-  const [convertPhone, setConvertPhone] = useState('');
   const phoneNumberRegexConvert1 = /^\+6309\d{9}$/;
   const phoneNumberRegexConvert2 = /^\+639\d{9}$/;
   const phoneNumberRegexConvert3 = /^9\d{9}$/;
@@ -35,6 +34,12 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Check if theres an image
+    if (!fileInputRef.current?.files?.length) {
+      alert('Please upload an image');
+      return;
+    }
 
     // Validate first name
     if (!nameRegex.test(firstName)) {
@@ -48,17 +53,17 @@ const RegisterForm = () => {
       return;
     }
 
+    let convertPhone = phone;
+
     if (phoneNumberRegexConvert1.test(phone)) {
       // Convert +6309123456789 to 09123456789
-      setConvertPhone(phone.replace(/^\+6309/, '09'));
+      convertPhone = phone.replace(/^\+6309/, '09');
     } else if (phoneNumberRegexConvert2.test(phone)) {
       // Convert +639123456789 to 09123456789
-      setConvertPhone(phone.replace(/^\+639/, '09'));
+      convertPhone = phone.replace(/^\+63/, '0');
     } else if (phoneNumberRegexConvert3.test(phone)) {
       // Convert 9123456789 to 09123456789
-      setConvertPhone('0' + phone);
-    } else {
-      setConvertPhone(phone);
+      convertPhone = '0' + phone;
     }
 
     // Validate phone number
