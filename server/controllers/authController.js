@@ -3,6 +3,9 @@ import path from "path";
 import { pool } from "../db.js";
 import { __dirname } from "../utils/dirname.js";
 import { limiterConsecutiveFailsByUsernameAndIP } from "../middleware/rate-limiter.js"; 
+
+// import the newly added FileType package from the package.json
+import { fileTypeFromBuffer }  from "file-type";
 /**
  * @desc Login user
  * @route POST /api/auth/login
@@ -144,13 +147,13 @@ export const register = async (req, res, next) => {
       res.status(400).json({ message: "Invalid phone number format" });
     }
 
-    console.log({
-      email,
-      first_name,
-      last_name,
-      convertedPhone,
-      password,
-    });
+    // console.log({
+    //   email,
+    //   first_name,
+    //   last_name,
+    //   convertedPhone,
+    //   password,
+    // });
 
     // Checks if email already exists !! I'm not sure if dapat malaman nila if user already exists
     const [existingUsers] = await pool.query(
@@ -170,10 +173,11 @@ export const register = async (req, res, next) => {
 
     // Uploads the photo to the server the assets folder
     const photo = req.files.photo_url;
+    const fileType = await fileTypeFromBuffer(photo.data);
 
-    const validImgTypes = ["image/jpeg", "image/png"];
-    if (!validImgTypes.includes(photo.mimetype)) {
-      return res.status(400).json({ message: "Sorry, Only JPEG or PNG files are allowed" });
+
+    if (!fileType || !['image/jpeg', 'image/png', 'image/webp'].includes(fileType.mime)) {
+      return res.status(400).json({ message: "Sorry, Only JPEG or PNG files are allowed" }); 
     }
 
 

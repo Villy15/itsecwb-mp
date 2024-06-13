@@ -93,8 +93,11 @@ const rateLimiterMiddlewareConsecutiveFailsByUsernameAndIP = (req, res, next) =>
     return res.status(400).send("Unable to process request.");
   }
 
+  // concatenate the email and the IP address
+  const key = `${req.body.email}_${req.ip}`;
+
   limiterConsecutiveFailsByUsernameAndIP
-    .consume(req.body.email)
+    .consume(key)
     .then((rateLimiterRes) => {
       rateLimiterRes.totalPoints = maxConsecutiveFailsByUsernameAndIP;
       console.log(rateLimiterRes.remainingPoints);
