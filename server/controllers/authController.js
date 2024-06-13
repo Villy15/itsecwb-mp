@@ -3,9 +3,10 @@ import path from "path";
 import { pool } from "../db.js";
 import { limiterConsecutiveFailsByUsernameAndIP } from "../middleware/rate-limiter.js";
 import { __dirname } from "../utils/dirname.js";
+import { limiterConsecutiveFailsByUsernameAndIP } from "../middleware/rate-limiter.js"; 
 
 // import the newly added FileType package from the package.json
-import { fileTypeFromBuffer } from "file-type";
+import { fileTypeFromBuffer }  from "file-type";
 /**
  * @desc Login user
  * @route POST /api/auth/login
@@ -175,13 +176,9 @@ export const register = async (req, res, next) => {
     const photo = req.files.photo_url;
     const fileType = await fileTypeFromBuffer(photo.data);
 
-    if (
-      !fileType ||
-      !["image/jpeg", "image/png", "image/webp"].includes(fileType.mime)
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Sorry, Only JPEG or PNG files are allowed" });
+
+    if (!fileType || !['image/jpeg', 'image/png', 'image/webp'].includes(fileType.mime)) {
+      return res.status(400).json({ message: "Sorry, Only JPEG or PNG files are allowed" }); 
     }
 
     const uploadPath = path.join(__dirname, "assets", photo.name);
