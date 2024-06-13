@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import path from "path";
 import { pool } from "../db.js";
 import { __dirname } from "../utils/dirname.js";
+import { limiterConsecutiveFailsByUsernameAndIP } from "../middleware/rate-limiter.js"; 
 /**
  * @desc Login user
  * @route POST /api/auth/login
@@ -48,6 +49,9 @@ export const login = async (req, res, next) => {
     if (!match) {
       return res.status(404).json({ message: "Invalid email or password" });
     }
+
+    // assuming that the user is authenticated, delete the consecutive fails
+    await limiterConsecutiveFailsByUsernameAndIP.delete(email, req.ip);
 
     req.session.user = {
       email: email,

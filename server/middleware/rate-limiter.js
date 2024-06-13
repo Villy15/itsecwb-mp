@@ -29,45 +29,88 @@ const limiterConsecutiveFailsByUsernameAndIP = new RateLimiterMySQL({
 });
 
 // the middleware function
-const rateLimiterMiddleware = (req, res, next) => {
-  // check if the email is present in the request body
-  if (!req.body.email) {
-    return res.status(400).send("Unable to process request.");
-  }
+// const rateLimiterMiddleware = (req, res, next) => {
+//   // check if the email is present in the request body
+//   if (!req.body.email) {
+//     return res.status(400).send("Unable to process request.");
+//   }
 
+//   limiterSlowBruteByIP
+//     .consume(req.ip)
+//     .then((rateLimiterRes1) => {
+//       res.set({
+//         "X-RateLimit-Limit-SlowBrute": rateLimiterRes1.totalPoints,
+//         "X-RateLimit-Remaining-SlowBrute": rateLimiterRes1.remainingPoints,
+//         "X-RateLimit-Reset-SlowBrute": new Date(
+//           Date.now() + rateLimiterRes1.msBeforeNext
+//         ),
+//       });
+//       return limiterConsecutiveFailsByUsernameAndIP.consume(req.body.email);
+//     })
+//     .then((rateLimiterRes2) => {
+//       rateLimiterRes2.totalPoints = maxConsecutiveFailsByUsernameAndIP;
+//       console.log(rateLimiterRes2.remainingPoints);
+
+//       res.set({
+//         "X-RateLimit-Limit-ConsecutiveFails": rateLimiterRes2.totalPoints,
+//         "X-RateLimit-Remaining-ConsecutiveFails":
+//           rateLimiterRes2.remainingPoints,
+//         "X-RateLimit-Reset-ConsecutiveFails": new Date(
+//           Date.now() + rateLimiterRes2.msBeforeNext
+//         ),
+//       });
+//       next();
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       console.log(req.body.email);
+//       res.status(429).send("Too Many Requests");
+//     });
+
+//   return limiterConsecutiveFailsByUsernameAndIP.consume(req.body.email);
+// };
+
+const rateLimiterMiddlewareSlowBruteByIP = (req, res, next) => {
   limiterSlowBruteByIP
     .consume(req.ip)
-    .then((rateLimiterRes1) => {
+    .then((rateLimiterRes) => {
       res.set({
-        "X-RateLimit-Limit-SlowBrute": rateLimiterRes1.totalPoints,
-        "X-RateLimit-Remaining-SlowBrute": rateLimiterRes1.remainingPoints,
-        "X-RateLimit-Reset-SlowBrute": new Date(
-          Date.now() + rateLimiterRes1.msBeforeNext
-        ),
-      });
-      return limiterConsecutiveFailsByUsernameAndIP.consume(req.body.email);
-    })
-    .then((rateLimiterRes2) => {
-      rateLimiterRes2.totalPoints = maxConsecutiveFailsByUsernameAndIP;
-      // console.log(rateLimiterRes2.totalPoints);
-
-      res.set({
-        "X-RateLimit-Limit-ConsecutiveFails": rateLimiterRes2.totalPoints,
-        "X-RateLimit-Remaining-ConsecutiveFails":
-          rateLimiterRes2.remainingPoints,
-        "X-RateLimit-Reset-ConsecutiveFails": new Date(
-          Date.now() + rateLimiterRes2.msBeforeNext
-        ),
+        "X-RateLimit-Limit": rateLimiterRes.totalPoints,
+        "X-RateLimit-Remaining": rateLimiterRes.remainingPoints,
+        "X-RateLimit-Reset": new Date(Date.now() + rateLimiterRes.msBeforeNext),
       });
       next();
     })
     .catch((err) => {
       console.log(err);
-      console.log(req.body.email);
       res.status(429).send("Too Many Requests");
     });
 
-  return limiterConsecutiveFailsByUsernameAndIP.consume(req.body.email);
+}
+
+const rateLimiterMiddlewareConsecutiveFailsByUsernameAndIP = (req, res, next) => {
+  if (!req.body.email) {
+    return res.status(400).send("Unable to process request.");
+  }
+
+  limiterConsecutiveFailsByUsernameAndIP
+    .consume(req.body.email)
+    .then((rateLimiterRes) => {
+      rateLimiterRes.totalPoints = maxConsecutiveFailsByUsernameAndIP;
+      console.log(rateLimiterRes.remainingPoints);
+
+      res.set({
+        "X-RateLimit-Limit-ConsecutiveFails": rateLimiterRes.totalPoints,
+        "X-RateLimit-Remaining-ConsecutiveFails": rateLimiterRes.remainingPoints,
+        "X-RateLimit-Reset-ConsecutiveFails": new Date(
+          Date.now() + rateLimiterRes.msBeforeNext
+        ),
+      });
+      next();
+    })
+    .catch(() => {
+      res.status(429).send("Too Many Requests");
+    });
 };
 
-export default rateLimiterMiddleware;
+export { rateLimiterMiddlewareSlowBruteByIP, rateLimiterMiddlewareConsecutiveFailsByUsernameAndIP, limiterConsecutiveFailsByUsernameAndIP, limiterSlowBruteByIP} ;
