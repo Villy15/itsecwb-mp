@@ -21,7 +21,7 @@ export const login = async (req, res, next) => {
     }
 
     // Password regex pattern
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{16,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
 
     if (!passwordRegex.test(password)) {
       return res.status(400).json({ message: "Invalid password format" });
@@ -40,8 +40,6 @@ export const login = async (req, res, next) => {
     );
 
     const captchaData = await captchaResponse.json();
-
-    console.log(captchaData);
 
     if (!captchaData.success)
       return res
@@ -115,7 +113,7 @@ export const register = async (req, res, next) => {
     }
 
     // Password regex pattern
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{16,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
 
     if (!passwordRegex.test(password)) {
       res.status(400).json({ message: "Invalid password format" });
@@ -135,7 +133,9 @@ export const register = async (req, res, next) => {
       convertedPhone = phone.replace(/^\+639/, "09");
     } else if (phoneNumberRegexConvert3.test(phone)) {
       // Convert 9123456789 to 09123456789
-      convertedPhone = "09" + phone;
+      convertedPhone = "0" + phone;
+    } else {
+      convertedPhone = phone;
     }
 
     // Phone number regex pattern (09xxxxxxxxx format)
@@ -143,14 +143,6 @@ export const register = async (req, res, next) => {
     if (!phoneRegex.test(convertedPhone)) {
       res.status(400).json({ message: "Invalid phone number format" });
     }
-
-    console.log({
-      email,
-      first_name,
-      last_name,
-      convertedPhone,
-      password,
-    });
 
     // Checks if email already exists !! I'm not sure if dapat malaman nila if user already exists
     const [existingUsers] = await pool.query(
@@ -190,6 +182,11 @@ export const register = async (req, res, next) => {
       "INSERT INTO users (email, password, first_name, last_name, photo_url, phone) VALUES (?, ?, ?, ?, ?, ?)",
       [email, hash, first_name, last_name, photo_url, phone]
     );
+
+    req.session.user = {
+      email: email,
+      role: "guest",
+    };
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {

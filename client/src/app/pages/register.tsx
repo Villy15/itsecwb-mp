@@ -1,5 +1,6 @@
 import { CameraIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
@@ -9,6 +10,8 @@ const RegisterForm = () => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const navigate = useNavigate();
 
   // File
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -53,6 +56,8 @@ const RegisterForm = () => {
       setConvertPhone(phone.replace(/^\+639/, '09'));
     } else if (phoneNumberRegexConvert3.test(phone)) {
       // Convert 9123456789 to 09123456789
+      setConvertPhone('0' + phone);
+    } else {
       setConvertPhone(phone);
     }
 
@@ -82,7 +87,7 @@ const RegisterForm = () => {
       formData.append('password', password);
       formData.append('first_name', firstName);
       formData.append('last_name', lastName);
-      formData.append('phone', phone);
+      formData.append('phone', convertPhone);
       if (fileInputRef.current?.files) {
         formData.append('photo_url', fileInputRef.current.files[0]);
       }
@@ -90,12 +95,11 @@ const RegisterForm = () => {
       const response = await fetch('http://localhost:8000/api/auth/register', {
         method: 'POST',
         body: formData,
+        credentials: 'include',
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Register successful:', data);
-        alert('register successful');
+      if (response.status == 201) {
+        navigate('/');
       } else if (response.status === 400) {
         const data = await response.json();
         console.error('Error: ', data.message);
