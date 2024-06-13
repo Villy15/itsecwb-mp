@@ -70,22 +70,80 @@ export const login = async (req, res, next) => {
 export const register = async (req, res, next) => {
   try {
     // Destructures the request body
-    const { email, first_name, last_name, phone } = req.body;
-    console.log({
-      email,
-      first_name,
-      last_name,
-      phone,
-    });
+    const { email, first_name, last_name, phone, password } = req.body;
 
-    // Validate email format
-    const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+    // Name regex pattern
+    const nameRegex = /^[A-Za-z]+(?:[\s-][A-Za-z]+)*$/;
 
+    // First name regex validation
+    if (!nameRegex.test(first_name)) {
+      console.log("Invalid first format");
+    } else {
+      console.log("Valid first format");
+    }
+
+    // Email regex validation
+    if (!nameRegex.test(last_name)) {
+      console.log("Invalid last format");
+    } else {
+      console.log("Valid last format");
+    }
+
+
+    // Email regex pattern
+    const emailRegex = /^[a-zA-Z\d._%+-]+(?:[a-zA-Z\d._%+-]*[a-zA-Z\d])?@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*\.[a-zA-Z]{2,}$/;
+    
+    // Email regex validation
     if (!emailRegex.test(email)) {
       console.log("Invalid email format");
     } else {
       console.log("Valid email format");
     }
+
+    // Password regex pattern
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
+
+    if (!passwordRegex.test(password)) {
+      console.log("Invalid password");
+    } else {
+      console.log("Valid password");
+    }
+
+    // Convert phone number format
+    let convertedPhone = phone;
+    const phoneNumberRegexConvert1 = /^\+6309\d{9}$/;
+    const phoneNumberRegexConvert2 = /^\+639\d{9}$/;
+    const phoneNumberRegexConvert3 = /^9\d{9}$/;
+
+    if (phoneNumberRegexConvert1.test(phone)) {
+      // Convert +6309123456789 to 09123456789
+      convertedPhone = phone.replace(/^\+6309/, '09');
+    } else if (phoneNumberRegexConvert2.test(phone)) {
+      // Convert +639123456789 to 09123456789
+      convertedPhone = phone.replace(/^\+639/, '09');
+    } else if (phoneNumberRegexConvert3.test(phone)) {
+      // Convert 9123456789 to 09123456789
+      convertedPhone = '09' + phone;
+    }
+
+    // Phone number regex pattern (09xxxxxxxxx format)
+    const phoneRegex = /^09\d{9}$/;
+    if (!phoneRegex.test(convertedPhone)) {
+      console.log("Invalid phone");
+    } else {
+      console.log("Valid phone");
+    }
+    /*if (!phoneRegex.test(convertedPhone)) {
+      return res.status(400).json({ message: "Invalid phone number format" });
+    }*/
+
+      console.log({
+        email,
+        first_name,
+        last_name,
+        convertedPhone,
+        password
+      });
 
     // Checks if email already exists !! I'm not sure if dapat malaman nila if user already exists
     const [existingUsers] = await pool.query(
