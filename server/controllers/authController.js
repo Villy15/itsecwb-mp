@@ -147,6 +147,14 @@ export const register = async (req, res, next) => {
       res.status(400).json({ message: "Invalid phone number format" });
     }
 
+    // console.log({
+    //   email,
+    //   first_name,
+    //   last_name,
+    //   convertedPhone,
+    //   password,
+    // });
+
     // Checks if email already exists !! I'm not sure if dapat malaman nila if user already exists
     const [existingUsers] = await pool.query(
       "SELECT * FROM users WHERE email = ?",
