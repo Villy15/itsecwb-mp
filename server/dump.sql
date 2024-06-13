@@ -1,6 +1,6 @@
 CREATE DATABASE  IF NOT EXISTS `itsecwb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `itsecwb`;
--- MySQL dump 10.13  Distrib 8.0.36, for macos14 (arm64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: itsecwb
 -- ------------------------------------------------------
@@ -32,12 +32,13 @@ CREATE TABLE `users` (
   `first_name` varchar(50) DEFAULT NULL,
   `last_name` varchar(50) DEFAULT NULL,
   `photo_url` varchar(255) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `enable` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,7 +47,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'adrianvill07@gmail.com','$2b$10$d8jkRku3UOg80uHfK4IVLuUJD7y8r/yHaek5UnBIP5vrLod3oLKB.','guest','Adriannnn','Villanuevaaa','http://example.com/photo.jpg','2024-06-07 03:23:59',1);
+INSERT INTO `users` VALUES (95,'adrianvill0a7@gmail.com','$2b$10$xPmqTyLPNBosz5aPfo7Nwu8R.TAKQZs81hET94YGcGORGVfoxWW9a','guest','Adrian','Villanueva','http://localhost:8000/assets/AFAC (square).png','09151944467','2024-06-10 10:22:56',1),(96,'adrianvill07@gmail.com','$2b$10$OIyE7u5WBUTdpdsv4FcZ7.tPAT1UtLEuC.RIJczuXkR/htUzG/G9.','guest','Adrian John','Villanueva','http://localhost:8000/assets/AFAC (square).png','123132131','2024-06-10 10:46:19',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -59,4 +60,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-07 11:28:18
+-- Dump completed on 2024-06-10 18:46:58

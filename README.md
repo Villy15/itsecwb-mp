@@ -20,7 +20,10 @@
 
 - Colors - Colors for logging
 - mysql2 - connect to mysql
+- [cors]() - allows server to respond to requests from different origins
 - [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme) - Password hashing
+- [express-fileupload]() - package to upload files
+- [helmet](https://helmetjs.github.io) - helps secure Express apps by setting HTTP response headers.
 
 ## Instructions
 
@@ -50,26 +53,16 @@ Add an env file in the server directory with
 PORT=8000
 ```
 
-## Initialize mysql using docker container
+## Mysql
 
-```
-docker pull mysql:8.0-debian
-```
-
-After pulling the image, run a container
-
-```
-docker run --name itsecwb -e MYSQL_ROOT_PASSWORD=12345 -p 3306:3306 -d mysql:8.0-debian
-```
-
-if on mac air m1
-
-```
-docker pull --platform linux/x86_64  mysql:8.0-debian
-```
-
-```
-docker run --name itsecwb -e MYSQL_ROOT_PASSWORD=12345 -p 3306:3306 -d --platform linux/x86_64 mysql:8.0-debian
-```
+Just install mysql 8.0.37 to prevent this error:
+`Error: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client`
 
 Copy the `dump.sql` file from the server directory and run it in mysql workbench to initialize the database
+
+# Accounts
+
+## Admin
+
+admin@gmail.com
+Adminpassword123!

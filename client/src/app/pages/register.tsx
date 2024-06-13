@@ -82,7 +82,7 @@ const RegisterForm = () => {
       />
       <input
         type="text"
-        placeholder="Phone"
+        placeholder="Phone Number"
         className="rounded border border-gray-200 p-2"
         value={phone}
         onChange={e => setPhone(e.target.value)}
@@ -104,11 +104,19 @@ const RegisterForm = () => {
         onChange={e => setPassword(e.target.value)}
         name="password"
       />
+      <div className="text-xs text-muted-foreground">
+        Phone number should be in the Philippine format, starting with +63 or
+        09, followed by the 9-digit number.
+      </div>
+      <div className="text-xs text-muted-foreground">
+        Passwords should be at least 16 characters, 1 uppercase, 1 lowercase, 1
+        number, 1 special
+      </div>
       <button
         type="submit"
         className="rounded bg-orange-400 p-2 text-white hover:bg-orange-500"
       >
-        Login
+        Register
       </button>
     </form>
   );
@@ -153,21 +161,19 @@ const UploadAvatar = ({
 
 function RegisterPage() {
   return (
-    <div className="flex grow flex-col items-center justify-center">
-      <div className="mb-4 flex flex-col items-center justify-center">
-        <div className="mb-4 text-2xl font-bold">Create Your Account</div>
-      </div>
-      <div className="flex w-full max-w-sm items-center justify-center">
-        <RegisterForm />
-      </div>
+    <div className="flex grow flex-row">
+      <div className="flex grow flex-col items-center justify-center">
+        <div className="mb-4 flex flex-col items-center justify-center">
+          <div className="mb-4 text-2xl font-bold">Create Your Account</div>
+        </div>
+        <div className="flex w-full max-w-sm items-center justify-center">
+          <RegisterForm />
+        </div>
 
-      <a href="/login" className="mt-8 text-sm hover:underline">
-        Go back to Login
-      </a>
-      {/* <div className="mt-8 max-w-sm text-center text-xs font-light">
-        By creating an account, you agree to our Terms of Service and have read
-        and understood the Privacy Policy
-      </div> */}
+        <a href="/login" className="mt-8 text-sm hover:underline">
+          Go back to Login
+        </a>
+      </div>
     </div>
   );
 }

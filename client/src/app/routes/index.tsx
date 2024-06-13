@@ -1,7 +1,7 @@
+import AdminPage from '../pages/admin';
 import HomePage from '../pages/home';
 import LoginPage from '../pages/login';
 import RegisterPage from '../pages/register';
-import UsersPage from '../pages/users';
 import { createBrowserRouter } from 'react-router-dom';
 
 import HomeLayout from '@/components/layouts/home-layout';
@@ -18,10 +18,10 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/users',
+    path: '/admin',
     element: (
       <HomeLayout>
-        <UsersPage />
+        <AdminPage />
       </HomeLayout>
     ),
   },
