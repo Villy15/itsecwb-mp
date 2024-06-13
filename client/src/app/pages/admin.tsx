@@ -28,7 +28,6 @@ function AdminPage() {
           }
         );
         const data = await response.json();
-        console.log(data);
         if (response.status === 200 && data.authorized) {
           setIsAuthorized(true);
           fetchUsers();

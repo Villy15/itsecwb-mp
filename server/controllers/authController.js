@@ -10,6 +10,22 @@ export const login = async (req, res, next) => {
   try {
     const { email, password, recaptchaToken } = req.body;
 
+    // Email regex pattern
+    const emailRegex =
+      /^[a-zA-Z\d._%+-]+(?:[a-zA-Z\d._%+-]*[a-zA-Z\d])?@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*\.[a-zA-Z]{2,}$/;
+
+    // Email regex validation
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // Password regex pattern
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ message: "Invalid password format" });
+    }
+
     // if (!recaptchaToken)
     //   return res.status(400).json({ message: "Recaptcha token is required" });
 
@@ -77,36 +93,28 @@ export const register = async (req, res, next) => {
 
     // First name regex validation
     if (!nameRegex.test(first_name)) {
-      console.log("Invalid first format");
-    } else {
-      console.log("Valid first format");
+      res.status(400).json({ message: "Invalid first name format" });
     }
 
     // Email regex validation
     if (!nameRegex.test(last_name)) {
-      console.log("Invalid last format");
-    } else {
-      console.log("Valid last format");
+      res.status(400).json({ message: "Invalid last name format" });
     }
 
-
     // Email regex pattern
-    const emailRegex = /^[a-zA-Z\d._%+-]+(?:[a-zA-Z\d._%+-]*[a-zA-Z\d])?@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*\.[a-zA-Z]{2,}$/;
-    
+    const emailRegex =
+      /^[a-zA-Z\d._%+-]+(?:[a-zA-Z\d._%+-]*[a-zA-Z\d])?@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*\.[a-zA-Z]{2,}$/;
+
     // Email regex validation
     if (!emailRegex.test(email)) {
-      console.log("Invalid email format");
-    } else {
-      console.log("Valid email format");
+      res.status(400).json({ message: "Invalid email format" });
     }
 
     // Password regex pattern
     const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
 
     if (!passwordRegex.test(password)) {
-      console.log("Invalid password");
-    } else {
-      console.log("Valid password");
+      res.status(400).json({ message: "Invalid password format" });
     }
 
     // Convert phone number format
@@ -117,33 +125,28 @@ export const register = async (req, res, next) => {
 
     if (phoneNumberRegexConvert1.test(phone)) {
       // Convert +6309123456789 to 09123456789
-      convertedPhone = phone.replace(/^\+6309/, '09');
+      convertedPhone = phone.replace(/^\+6309/, "09");
     } else if (phoneNumberRegexConvert2.test(phone)) {
       // Convert +639123456789 to 09123456789
-      convertedPhone = phone.replace(/^\+639/, '09');
+      convertedPhone = phone.replace(/^\+639/, "09");
     } else if (phoneNumberRegexConvert3.test(phone)) {
       // Convert 9123456789 to 09123456789
-      convertedPhone = '09' + phone;
+      convertedPhone = "09" + phone;
     }
 
     // Phone number regex pattern (09xxxxxxxxx format)
     const phoneRegex = /^09\d{9}$/;
     if (!phoneRegex.test(convertedPhone)) {
-      console.log("Invalid phone");
-    } else {
-      console.log("Valid phone");
+      res.status(400).json({ message: "Invalid phone number format" });
     }
-    /*if (!phoneRegex.test(convertedPhone)) {
-      return res.status(400).json({ message: "Invalid phone number format" });
-    }*/
 
-      console.log({
-        email,
-        first_name,
-        last_name,
-        convertedPhone,
-        password
-      });
+    console.log({
+      email,
+      first_name,
+      last_name,
+      convertedPhone,
+      password,
+    });
 
     // Checks if email already exists !! I'm not sure if dapat malaman nila if user already exists
     const [existingUsers] = await pool.query(
@@ -213,6 +216,7 @@ export const checkAuth = async (req, res, next) => {
 export const logout = async (req, res, next) => {
   try {
     req.session.destroy();
+    res.clearCookie("connect.sid");
     res
       .status(200)
       .json({ message: "User logged out successfully", loggedOut: true });
