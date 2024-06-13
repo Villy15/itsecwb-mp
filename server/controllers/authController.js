@@ -51,7 +51,7 @@ export const login = async (req, res, next) => {
 
     req.session.user = {
       email: email,
-      admin: rows[0].admin,
+      role: rows[0].role,
     };
 
     res.status(200).json({ message: "User logged in successfully" });
@@ -126,6 +126,23 @@ export const checkAuth = async (req, res, next) => {
     return res
       .status(401)
       .json({ message: "User is not authenticated", authorized: false });
+  } catch (err) {
+    const error = new Error(err.message);
+    error.status = 400;
+    return next(error);
+  }
+};
+
+/**
+ * @desc Logout user
+ * @route POST /api/auth/logout
+ */
+export const logout = async (req, res, next) => {
+  try {
+    req.session.destroy();
+    res
+      .status(200)
+      .json({ message: "User logged out successfully", loggedOut: true });
   } catch (err) {
     const error = new Error(err.message);
     error.status = 400;

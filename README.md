@@ -59,3 +59,10 @@ Just install mysql 8.0.37 to prevent this error:
 `Error: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client`
 
 Copy the `dump.sql` file from the server directory and run it in mysql workbench to initialize the database
+
+# Accounts
+
+## Admin
+
+admin@gmail.com
+Adminpassword123!

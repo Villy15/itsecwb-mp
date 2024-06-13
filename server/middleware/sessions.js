@@ -9,7 +9,7 @@ const isAuthenticated = (req, res, next) => {
 
 // Middleware to check if user is admin
 const isAdmin = (req, res, next) => {
-  if (req.session.user && req.session.user.admin === "admin") {
+  if (req.session.user && req.session.user.role === "admin") {
     return next();
   }
   return res.status(403).json({ message: "Forbidden" });
