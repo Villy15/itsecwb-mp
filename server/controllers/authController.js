@@ -11,6 +11,22 @@ export const login = async (req, res, next) => {
   try {
     const { email, password, recaptchaToken } = req.body;
 
+    // Email regex pattern
+    const emailRegex =
+      /^[a-zA-Z\d._%+-]+(?:[a-zA-Z\d._%+-]*[a-zA-Z\d])?@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*\.[a-zA-Z]{2,}$/;
+
+    // Email regex validation
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // Password regex pattern
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ message: "Invalid password format" });
+    }
+
     // if (!recaptchaToken)
     //   return res.status(400).json({ message: "Recaptcha token is required" });
 
@@ -74,7 +90,67 @@ export const login = async (req, res, next) => {
 export const register = async (req, res, next) => {
   try {
     // Destructures the request body
-    const { email, first_name, last_name, phone } = req.body;
+    const { email, first_name, last_name, phone, password } = req.body;
+
+    // Name regex pattern
+    const nameRegex = /^[A-Za-z]+(?:[\s-][A-Za-z]+)*$/;
+
+    // First name regex validation
+    if (!nameRegex.test(first_name)) {
+      res.status(400).json({ message: "Invalid first name format" });
+    }
+
+    // Email regex validation
+    if (!nameRegex.test(last_name)) {
+      res.status(400).json({ message: "Invalid last name format" });
+    }
+
+    // Email regex pattern
+    const emailRegex =
+      /^[a-zA-Z\d._%+-]+(?:[a-zA-Z\d._%+-]*[a-zA-Z\d])?@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*\.[a-zA-Z]{2,}$/;
+
+    // Email regex validation
+    if (!emailRegex.test(email)) {
+      res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // Password regex pattern
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
+
+    if (!passwordRegex.test(password)) {
+      res.status(400).json({ message: "Invalid password format" });
+    }
+
+    // Convert phone number format
+    let convertedPhone = phone;
+    const phoneNumberRegexConvert1 = /^\+6309\d{9}$/;
+    const phoneNumberRegexConvert2 = /^\+639\d{9}$/;
+    const phoneNumberRegexConvert3 = /^9\d{9}$/;
+
+    if (phoneNumberRegexConvert1.test(phone)) {
+      // Convert +6309123456789 to 09123456789
+      convertedPhone = phone.replace(/^\+6309/, "09");
+    } else if (phoneNumberRegexConvert2.test(phone)) {
+      // Convert +639123456789 to 09123456789
+      convertedPhone = phone.replace(/^\+639/, "09");
+    } else if (phoneNumberRegexConvert3.test(phone)) {
+      // Convert 9123456789 to 09123456789
+      convertedPhone = "09" + phone;
+    }
+
+    // Phone number regex pattern (09xxxxxxxxx format)
+    const phoneRegex = /^09\d{9}$/;
+    if (!phoneRegex.test(convertedPhone)) {
+      res.status(400).json({ message: "Invalid phone number format" });
+    }
+
+    console.log({
+      email,
+      first_name,
+      last_name,
+      convertedPhone,
+      password,
+    });
 
     // Checks if email already exists !! I'm not sure if dapat malaman nila if user already exists
     const [existingUsers] = await pool.query(
@@ -94,6 +170,13 @@ export const register = async (req, res, next) => {
 
     // Uploads the photo to the server the assets folder
     const photo = req.files.photo_url;
+
+    const validImgTypes = ["image/jpeg", "image/png"];
+    if (!validImgTypes.includes(photo.mimetype)) {
+      return res.status(400).json({ message: "Sorry, Only JPEG or PNG files are allowed" });
+    }
+
+
     const uploadPath = path.join(__dirname, "assets", photo.name);
     await photo.mv(uploadPath);
     // Initializes the photo_url for the database
@@ -144,6 +227,7 @@ export const checkAuth = async (req, res, next) => {
 export const logout = async (req, res, next) => {
   try {
     req.session.destroy();
+    res.clearCookie("connect.sid");
     res
       .status(200)
       .json({ message: "User logged out successfully", loggedOut: true });

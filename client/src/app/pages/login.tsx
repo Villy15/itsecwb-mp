@@ -15,41 +15,10 @@ const LoginForm = () => {
 
   const navigate = useNavigate();
 
-  /**
-   * Email validation regex
-   * Assumption: The email format would use **prefix@domain**.
-   * - The **prefix** may only contain alphanumeric and special characters (underscores, periods, and dashes only)
-   *  where the special characters must be followed by one or more letter or numbers
-   *
-   * - The **domain** may only contain alphanumeric and hyphens where the hyphens must be followed
-   *  by one or more letter or numbers
-   *
-   * Example:
-   * - Valid:
-   *   - abc-d@mail.com
-   * - Invalid:
-   *   - abc-@mail.c
-   */
   const emailRegex =
-    /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+    /^[a-zA-Z\d._%+-]+(?:[a-zA-Z\d._%+-]*[a-zA-Z\d])?@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*\.[a-zA-Z]{2,}$/;
 
-  /**
-   * Password validation regex
-   * - At least one uppercase letter
-   * - At least one lowercase letter
-   * - At least one number
-   * - At least one special character
-   * - Minimum length of 12 characters
-   * - Maximum length of 64 character
-   *
-   * Example:
-   * - Valid:
-   *   - @n1M0La5A!I3
-   * - Invalid:
-   *   - DLSU1234!
-   */
-  const passwordRegex =
-    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,64}$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,9 +56,6 @@ const LoginForm = () => {
       }
 
       if (response.ok) {
-        const data = await response.json();
-        console.log('Login successful:', data);
-
         navigate('/');
       } else {
         console.error('Failed to login:', response.statusText);

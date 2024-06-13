@@ -9,7 +9,7 @@ import {
   ShoppingCart,
   Users,
 } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // import { ModeToggle } from './ModeToggle';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -48,8 +48,31 @@ const links = [
   },
 ];
 
-const Header = () => {
+type HeaderProps = {
+  isAuthorized: boolean | null;
+};
+
+const Header = ({ isAuthorized }: HeaderProps) => {
   const pathname = useLocation().pathname;
+
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/auth/logout', {
+        credentials: 'include',
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        navigate('/login');
+      } else {
+        console.error('Failed to logout');
+      }
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    }
+  };
 
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
@@ -130,9 +153,15 @@ const Header = () => {
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <a href="/login">Login</a>
-          </DropdownMenuItem>
+          {isAuthorized ? (
+            <DropdownMenuItem asChild>
+              <a onClick={logout}>Logout</a>
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem asChild>
+              <a href="/login">Login</a>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       {/* <ModeToggle /> */}
