@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface User {
   id: number;
@@ -17,28 +17,31 @@ function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
-  const checkAuthorization = useCallback(async function () {
-    try {
-      const response = await fetch('http://localhost:8000/api/auth/checkAuth', {
-        credentials: 'include',
-        method: 'POST',
-      });
-      const data = await response.json();
-      console.log(data);
-      if (response.status === 200 && data.authorized) {
-        setIsAuthorized(true);
-        fetchUsers();
-      } else {
-        setIsAuthorized(false);
-      }
-    } catch (error) {
-      console.error('Failed to check authorization:', error);
-    }
-  }, []);
-
   useEffect(() => {
+    async function checkAuthorization() {
+      try {
+        const response = await fetch(
+          'http://localhost:8000/api/auth/checkAuth',
+          {
+            credentials: 'include',
+            method: 'POST',
+          }
+        );
+        const data = await response.json();
+        console.log(data);
+        if (response.status === 200 && data.authorized) {
+          setIsAuthorized(true);
+          fetchUsers();
+        } else {
+          setIsAuthorized(false);
+        }
+      } catch (error) {
+        console.error('Failed to check authorization:', error);
+      }
+    }
+
     checkAuthorization();
-  }, [checkAuthorization]);
+  }, []);
 
   const fetchUsers = async () => {
     try {

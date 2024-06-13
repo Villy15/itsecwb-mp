@@ -61,7 +61,7 @@ app.use(fileUpload());
 
 // Health check
 app.get("/api", (req, res) => {
-  res.json({
+  res.status(200).json({
     message: "Hello World from API",
   });
 });
