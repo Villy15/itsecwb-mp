@@ -71,6 +71,21 @@ export const register = async (req, res, next) => {
   try {
     // Destructures the request body
     const { email, first_name, last_name, phone } = req.body;
+    console.log({
+      email,
+      first_name,
+      last_name,
+      phone,
+    });
+
+    // Validate email format
+    const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+
+    if (!emailRegex.test(email)) {
+      console.log("Invalid email format");
+    } else {
+      console.log("Valid email format");
+    }
 
     // Checks if email already exists !! I'm not sure if dapat malaman nila if user already exists
     const [existingUsers] = await pool.query(
