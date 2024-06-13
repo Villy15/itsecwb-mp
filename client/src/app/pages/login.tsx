@@ -11,7 +11,7 @@ const LoginForm = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [recaptchaToken, setRecaptchaToken] = useState('');
-  const [submitEnabled, setSubmitEnabled] = useState(true);
+  const [submitEnabled, setSubmitEnabled] = useState(false);
 
   const navigate = useNavigate();
 

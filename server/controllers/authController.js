@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
 import path from "path";
 import { pool } from "../db.js";
+import { limiterConsecutiveFailsByUsernameAndIP } from "../middleware/rate-limiter.js";
 import { __dirname } from "../utils/dirname.js";
-import { limiterConsecutiveFailsByUsernameAndIP } from "../middleware/rate-limiter.js"; 
 /**
  * @desc Login user
  * @route POST /api/auth/login
@@ -27,26 +27,26 @@ export const login = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid password format" });
     }
 
-    // if (!recaptchaToken)
-    //   return res.status(400).json({ message: "Recaptcha token is required" });
+    if (!recaptchaToken)
+      return res.status(400).json({ message: "Recaptcha token is required" });
 
     // Check if recaptcha token is valid
     // FROM https://developers.google.com/recaptcha/docs/verify
-    // const captchaResponse = await fetch(
-    //   `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SITE_KEY_V2}&response=${recaptchaToken}`,
-    //   {
-    //     method: "POST",
-    //   }
-    // );
+    const captchaResponse = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SITE_KEY_V2}&response=${recaptchaToken}`,
+      {
+        method: "POST",
+      }
+    );
 
-    // const captchaData = await captchaResponse.json();
+    const captchaData = await captchaResponse.json();
 
-    // console.log(captchaData);
+    console.log(captchaData);
 
-    // if (!captchaData.success)
-    //   return res
-    //     .status(400)
-    //     .json({ message: "Invalid recaptcha token", captchaData: captchaData });
+    if (!captchaData.success)
+      return res
+        .status(400)
+        .json({ message: "Invalid recaptcha token", captchaData: captchaData });
 
     // Check if email exists
     const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
@@ -173,9 +173,10 @@ export const register = async (req, res, next) => {
 
     const validImgTypes = ["image/jpeg", "image/png"];
     if (!validImgTypes.includes(photo.mimetype)) {
-      return res.status(400).json({ message: "Sorry, Only JPEG or PNG files are allowed" });
+      return res
+        .status(400)
+        .json({ message: "Sorry, Only JPEG or PNG files are allowed" });
     }
-
 
     const uploadPath = path.join(__dirname, "assets", photo.name);
     await photo.mv(uploadPath);
@@ -204,6 +205,7 @@ export const register = async (req, res, next) => {
  */
 export const checkAuth = async (req, res, next) => {
   try {
+    //! WARNING Fix
     if (req.session.user) {
       return res
         .status(200)
