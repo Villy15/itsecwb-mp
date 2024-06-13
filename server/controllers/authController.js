@@ -62,6 +62,13 @@ export const register = async (req, res, next) => {
 
     // Uploads the photo to the server the assets folder
     const photo = req.files.photo_url;
+
+    const validImgTypes = ["image/jpeg", "image/png"];
+    if (!validImgTypes.includes(photo.mimetype)) {
+      return res.status(400).json({ message: "Sorry, Only JPEG or PNG files are allowed" });
+    }
+
+
     const uploadPath = path.join(__dirname, "assets", photo.name);
     await photo.mv(uploadPath);
     // Initializes the photo_url for the database
