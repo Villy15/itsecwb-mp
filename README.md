@@ -66,3 +66,33 @@ Copy the `dump.sql` file from the server directory and run it in mysql workbench
 
 admin@gmail.com
 Adminpassword123!
+
+# MILESTONE 1 Instructions
+
+Deployment Instructions - Milestone 1
+
+Instructions
+
+- Download itsecwb-mp-zip
+- Extract it
+- Go to a terminal and cd to that directory
+- Go to client directory
+  - cd client
+  - npm i (to install packages)
+  - npm run dev
+- Go to Server directory
+  - cd server
+  - npm i (to install packages)
+  - npm run dev
+- Create a mysql server using version 8.0.36 / 37 (from https://dev.mysql.com/downloads/mysql/)
+  - Install that mysql server and run it
+  - Use the ff values for that server:
+  - host: "localhost",
+  - port: 3306,
+  - user: "root",
+  - password: "12345",
+- Make sure that you run both client and server and open an instance of that mysql server
+- To check the client go to http://localhost:3000
+- To test the backend api use http://localhost:8000/api
+- Add the .env.example to a newly created .env files for both client and server
+- Run the dump.sql from the server directory to your mysql server
