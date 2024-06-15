@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import path from "path";
 import { pool } from "../db.js";
-import { limiterConsecutiveFailsByUsernameAndIP } from "../middleware/rate-limiter.js";
+// import { limiterConsecutiveFailsByUsernameAndIP } from "../middleware/rate-limiter.js";
 import { __dirname } from "../utils/dirname.js";
 
 // import the newly added FileType package from the package.json

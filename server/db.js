@@ -1,20 +1,19 @@
-import mysql from "mysql";
 import { createPool } from "mysql2/promise";
 
 const pool = createPool({
-  host: "localhost",
-  port: 3306,
+  host: "roundhouse.proxy.rlwy.net",
+  port: 25350,
   user: "root",
-  password: "12345",
+  password: "CqSgBziYHewCgnVesLPIdYHJsPdlHOZZ",
   database: "itsecwb",
 });
 
-const poolForRateLimiter = mysql.createPool({
-  host: "localhost",
-  port: 3306,
-  user: "root",
-  password: "12345",
-  database: "itsecwb",
-});
+// const poolForRateLimiter = mysql.createPool({
+//   host: "roundhouse.proxy.rlwy.net",
+//   port: 25350,
+//   user: "root",
+//   password: "CqSgBziYHewCgnVesLPIdYHJsPdlHOZZ",
+//   database: "railway",
+// });
 
-export { pool, poolForRateLimiter };
+export { pool };
