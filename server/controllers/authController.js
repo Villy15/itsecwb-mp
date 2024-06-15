@@ -68,7 +68,7 @@ export const login = async (req, res, next) => {
     }
 
     // assuming that the user is authenticated, delete the consecutive fails
-    await limiterConsecutiveFailsByUsernameAndIP.delete(email, req.ip);
+    // await limiterConsecutiveFailsByUsernameAndIP.delete(email, req.ip);
 
     req.session.user = {
       email: email,
