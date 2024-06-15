@@ -38,7 +38,7 @@ function HomePage() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${API_URL}}/api`, {
+      const response = await fetch(`${API_URL}/api`, {
         credentials: 'include',
       });
 

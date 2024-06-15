@@ -46,7 +46,7 @@ function AdminPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`${API_URL}}/api/users`, {
+      const response = await fetch(`${API_URL}/api/users`, {
         credentials: 'include',
         method: 'GET',
       });

@@ -99,7 +99,7 @@ const RegisterForm = () => {
         formData.append('photo_url', fileInputRef.current.files[0]);
       }
 
-      const response = await fetch(`${API_URL}}/api/auth/register`, {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         body: formData,
         credentials: 'include',

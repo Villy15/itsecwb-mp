@@ -61,7 +61,7 @@ const Header = ({ isAuthorized }: HeaderProps) => {
 
   const logout = async () => {
     try {
-      const response = await fetch(`${API_URL}}/api/auth/logout`, {
+      const response = await fetch(`${API_URL}/api/auth/logout`, {
         credentials: 'include',
         method: 'POST',
       });
