@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
+import API_URL from '@/config';
+
 const RegisterForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -97,7 +99,7 @@ const RegisterForm = () => {
         formData.append('photo_url', fileInputRef.current.files[0]);
       }
 
-      const response = await fetch('http://localhost:8000/api/auth/register', {
+      const response = await fetch(`${API_URL}}/api/auth/register`, {
         method: 'POST',
         body: formData,
         credentials: 'include',

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import API_URL from '@/config';
+
 interface User {
   id: number;
   email: string;
@@ -44,7 +46,7 @@ function AdminPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/users', {
+      const response = await fetch(`${API_URL}}/api/users`, {
         credentials: 'include',
         method: 'GET',
       });

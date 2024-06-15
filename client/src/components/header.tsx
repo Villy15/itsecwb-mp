@@ -25,6 +25,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
+import API_URL from '@/config';
+
 const links = [
   { href: '/', label: 'Dashboard' },
   { href: '/admin', label: 'Admin' },
@@ -59,7 +61,7 @@ const Header = ({ isAuthorized }: HeaderProps) => {
 
   const logout = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/auth/logout', {
+      const response = await fetch(`${API_URL}}/api/auth/logout`, {
         credentials: 'include',
         method: 'POST',
       });

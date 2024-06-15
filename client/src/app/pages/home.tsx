@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 
 import Header from '@/components/header';
 
+import API_URL from '@/config';
+
 // import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
@@ -36,7 +38,7 @@ function HomePage() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api', {
+      const response = await fetch(`${API_URL}}/api`, {
         credentials: 'include',
       });
 
