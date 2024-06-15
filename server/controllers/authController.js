@@ -185,7 +185,7 @@ export const register = async (req, res, next) => {
     const uploadPath = path.join(__dirname, "assets", photo.name);
     await photo.mv(uploadPath);
     // Initializes the photo_url for the database
-    const photo_url = `http://localhost:${process.env.PORT}/assets/${photo.name}`;
+    const photo_url = `https://itsecwb-aawj.xyz/assets/${photo.name}`;
 
     // Hashes the password
     const hash = await bcrypt.hash(req.body.password, 10);
