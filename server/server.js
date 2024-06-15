@@ -28,7 +28,7 @@ const app = express();
 app.use(
   cors({
     // Allow only the frontend to access the backend
-    origin: "http://localhost:3000, https://itsecwb-aawj.xyz",
+    origin: ["http://localhost:3000", "https://itsecwb-aawj.xyz"],
     credentials: true,
   })
 );
