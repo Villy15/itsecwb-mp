@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 import ReCaptcha from '@/components/recaptcha';
 
+import API_URL from '@/config';
+
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,7 +42,7 @@ const LoginForm = () => {
     setErrorMessage('');
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/login', {
+      const response = await fetch(`${API_URL}}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
