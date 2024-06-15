@@ -22,13 +22,10 @@ function AdminPage() {
   useEffect(() => {
     async function checkAuthorization() {
       try {
-        const response = await fetch(
-          'http://localhost:8000/api/auth/checkAuth',
-          {
-            credentials: 'include',
-            method: 'POST',
-          }
-        );
+        const response = await fetch(`${API_URL}/api/auth/checkAuth`, {
+          credentials: 'include',
+          method: 'POST',
+        });
         const data = await response.json();
         if (response.status === 200 && data.authorized && data.isAdmin) {
           setIsAuthorized(true);
