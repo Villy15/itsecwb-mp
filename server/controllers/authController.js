@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import path from "path";
 import { pool } from "../db.js";
 // import { limiterConsecutiveFailsByUsernameAndIP } from "../middleware/rate-limiter.js";
+import HOST_URL from "../config.js";
 import { __dirname } from "../utils/dirname.js";
 
 // import the newly added FileType package from the package.json
@@ -185,7 +186,7 @@ export const register = async (req, res, next) => {
     const uploadPath = path.join(__dirname, "assets", photo.name);
     await photo.mv(uploadPath);
     // Initializes the photo_url for the database
-    const photo_url = `https://itsecwb-aawj.xyz/assets/${photo.name}`;
+    const photo_url = `${HOST_URL}/assets/${photo.name}`;
 
     // Hashes the password
     const hash = await bcrypt.hash(req.body.password, 10);

@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 import API_URL from '@/config';
@@ -15,44 +17,77 @@ interface User {
   enable: number;
 }
 
+interface AuthResponse {
+  authorized: boolean;
+  isAdmin: boolean;
+}
+
+async function fetchUsers(): Promise<User[]> {
+  try {
+    const { data } = await axios.get(`${API_URL}/api/users`, {
+      withCredentials: true,
+    });
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+async function checkAuthorization(): Promise<AuthResponse> {
+  try {
+    const { data } = await axios.post(`${API_URL}/api/auth/checkAuth`, null, {
+      withCredentials: true,
+    });
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 function AdminPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  const {
+    isPending: isAuthPending,
+    isError: isAuthError,
+    data: authResponse,
+    error: authError,
+  } = useQuery({
+    queryKey: ['auth'],
+    queryFn: checkAuthorization,
+  });
 
   useEffect(() => {
-    async function checkAuthorization() {
-      try {
-        const response = await fetch(`${API_URL}/api/auth/checkAuth`, {
-          credentials: 'include',
-          method: 'POST',
-        });
-        const data = await response.json();
-        if (response.status === 200 && data.authorized && data.isAdmin) {
-          setIsAuthorized(true);
-          fetchUsers();
-        } else {
-          setIsAuthorized(false);
-        }
-      } catch (error) {
-        console.error('Failed to check authorization:', error);
+    if (authResponse) {
+      if (authResponse.authorized && authResponse.isAdmin) {
+        setIsAuthorized(true);
+      } else {
+        setIsAuthorized(false);
       }
     }
+  }, [authResponse]);
 
-    checkAuthorization();
-  }, []);
+  const {
+    isPending: isUsersPending,
+    isError: isUsersError,
+    data: users,
+    error: usersError,
+  } = useQuery({
+    queryKey: ['users'],
+    queryFn: fetchUsers,
+    enabled: isAuthorized,
+  });
 
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/users`, {
-        credentials: 'include',
-        method: 'GET',
-      });
-      const data = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error('Failed to fetch users:', error);
-    }
-  };
+  if (isAuthPending || isUsersPending) {
+    return <p>Loading...</p>;
+  }
+
+  if (isAuthError || isUsersError) {
+    return <p>Error: {authError?.message || usersError?.message}</p>;
+  }
 
   return (
     <div className="p-6">

@@ -1,3 +1,5 @@
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import { CameraIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +8,38 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 import API_URL from '@/config';
 
+interface RegisterResponse {
+  message: string;
+  status: number;
+  statusText: string;
+}
+
+async function register(formData: FormData): Promise<RegisterResponse> {
+  try {
+    const { data } = await axios.post(
+      `${API_URL}/api/auth/register`,
+      formData,
+      {
+        withCredentials: true,
+      }
+    );
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 const RegisterForm = () => {
+  const mutation = useMutation({
+    mutationFn: register,
+    onSuccess: () => navigate('/'),
+    onError: error => {
+      alert(error.message);
+    },
+  });
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
@@ -88,33 +121,17 @@ const RegisterForm = () => {
       return;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append('email', email);
-      formData.append('password', password);
-      formData.append('first_name', firstName);
-      formData.append('last_name', lastName);
-      formData.append('phone', convertPhone);
-      if (fileInputRef.current?.files) {
-        formData.append('photo_url', fileInputRef.current.files[0]);
-      }
-
-      const response = await fetch(`${API_URL}/api/auth/register`, {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
-
-      if (response.status == 201) {
-        navigate('/');
-      } else if (response.status === 400) {
-        const data = await response.json();
-        console.error('Error: ', data.message);
-        alert(data.message);
-      }
-    } catch (error) {
-      console.error('Failed to login:', error);
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('first_name', firstName);
+    formData.append('last_name', lastName);
+    formData.append('phone', convertPhone);
+    if (fileInputRef.current?.files) {
+      formData.append('photo_url', fileInputRef.current.files[0]);
     }
+
+    mutation.mutate(formData);
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {

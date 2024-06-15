@@ -1,61 +1,86 @@
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 import Header from '@/components/header';
 
 import API_URL from '@/config';
 
-// import { useNavigate } from 'react-router-dom';
+interface AuthResponse {
+  authorized: boolean;
+}
+
+async function checkAuthorization(): Promise<AuthResponse> {
+  try {
+    const { data } = await axios.post(`${API_URL}/api/auth/checkAuth`, null, {
+      withCredentials: true,
+    });
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+async function fetchData(): Promise<{ message: string }> {
+  try {
+    const { data } = await axios.get(`${API_URL}/api`, {
+      withCredentials: true,
+    });
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 function HomePage() {
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
 
-  const [backendMessage, setBackendMessage] = useState<string>('Loading');
+  const {
+    isPending: isAuthPending,
+    isError: isAuthError,
+    data: authResponse,
+    error: authError,
+  } = useQuery({
+    queryKey: ['auth'],
+    queryFn: checkAuthorization,
+  });
 
   useEffect(() => {
-    async function checkAuthorization() {
-      try {
-        const response = await fetch(`${API_URL}/api/auth/checkAuth`, {
-          credentials: 'include',
-          method: 'POST',
-        });
-        const data = await response.json();
-        if (response.status === 200 && data.authorized) {
-          setIsAuthorized(true);
-          fetchData();
-        } else {
-          setIsAuthorized(false);
-        }
-      } catch (error) {
-        console.error('Failed to check authorization:', error);
-      }
+    if (authResponse && authResponse.authorized) {
+      setIsAuthorized(true);
+    } else {
+      setIsAuthorized(false);
     }
+  }, [authResponse]);
 
-    checkAuthorization();
-  }, []);
+  const {
+    isPending: isDataPending,
+    isError: isDataError,
+    data: backendData,
+    error: dataError,
+  } = useQuery({
+    queryKey: ['data'],
+    queryFn: fetchData,
+    enabled: !!isAuthorized,
+  });
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api`, {
-        credentials: 'include',
-      });
+  if (isAuthPending || isDataPending) {
+    return <p>Loading...</p>;
+  }
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch message');
-      }
-
-      const data = await response.json();
-      setBackendMessage(data.message);
-    } catch (error) {
-      console.error('Failed to fetch message:', error);
-      setBackendMessage('Failed to fetch message');
-    }
-  };
+  if (isAuthError || isDataError) {
+    return <p>Error: {authError?.message || dataError?.message}</p>;
+  }
 
   return (
     <>
       <Header isAuthorized={isAuthorized} />
       <div className="p-6">
-        <p>{backendMessage}</p>
+        <p>{backendData?.message}</p>
       </div>
     </>
   );

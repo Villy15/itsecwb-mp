@@ -1,3 +1,5 @@
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { RiAiGenerate } from 'react-icons/ri';
@@ -7,7 +9,52 @@ import ReCaptcha from '@/components/recaptcha';
 
 import API_URL from '@/config';
 
+interface LoginResponse {
+  message: string;
+  status: number;
+  statusText: string;
+}
+
+interface LoginParams {
+  email: string;
+  password: string;
+  recaptchaToken: string;
+}
+
+async function login({
+  email,
+  password,
+  recaptchaToken,
+}: LoginParams): Promise<LoginResponse> {
+  try {
+    const { data } = await axios.post(
+      `${API_URL}/api/auth/login`,
+      {
+        email,
+        password,
+        recaptchaToken,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 const LoginForm = () => {
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: () => navigate('/'),
+    onError: error => {
+      setErrorMessage(error.message);
+    },
+  });
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -24,6 +71,7 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setErrorMessage('');
 
     // Validate email
     if (!emailRegex.test(email)) {
@@ -38,34 +86,7 @@ const LoginForm = () => {
       return;
     }
 
-    // Reset email error
-    setErrorMessage('');
-
-    try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, recaptchaToken }),
-        credentials: 'include',
-      });
-
-      if (response.status === 429) {
-        console.error('Too many requests:', response.statusText);
-        alert('Too many requests. Please try again later.');
-        return;
-      }
-
-      if (response.ok) {
-        navigate('/');
-      } else {
-        console.error('Failed to login:', response.statusText);
-        alert('Failed to login');
-      }
-    } catch (error) {
-      console.error('Failed to login:', error);
-    }
+    mutation.mutate({ email, password, recaptchaToken });
   };
 
   const handleToken = (token: string) => {
