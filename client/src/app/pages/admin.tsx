@@ -1,51 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-import API_URL from '@/lib/config';
-
-interface User {
-  id: number;
-  email: string;
-  password: string;
-  role: string;
-  first_name: string | null;
-  last_name: string | null;
-  photo_url: string | null;
-  phone: string | null;
-  created_at: string;
-  enable: number;
-}
-
-interface AuthResponse {
-  authorized: boolean;
-  isAdmin: boolean;
-}
-
-async function fetchUsers(): Promise<User[]> {
-  try {
-    const { data } = await axios.get(`${API_URL}/api/users`, {
-      withCredentials: true,
-    });
-
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-async function checkAuthorization(): Promise<AuthResponse> {
-  try {
-    const { data } = await axios.post(`${API_URL}/api/auth/checkAuth`, null, {
-      withCredentials: true,
-    });
-
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
+import { useCheckAuth } from '@/hooks/auth';
+import { useGetUsers } from '@/hooks/users';
 
 function AdminPage() {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -55,10 +11,7 @@ function AdminPage() {
     isError: isAuthError,
     data: authResponse,
     error: authError,
-  } = useQuery({
-    queryKey: ['auth'],
-    queryFn: checkAuthorization,
-  });
+  } = useCheckAuth();
 
   useEffect(() => {
     if (authResponse) {
@@ -74,11 +27,7 @@ function AdminPage() {
     isError: isUsersError,
     data: users,
     error: usersError,
-  } = useQuery({
-    queryKey: ['users'],
-    queryFn: fetchUsers,
-    enabled: !!isAuthorized,
-  });
+  } = useGetUsers();
 
   if (isAuthPending) {
     return <p>Loading...</p>;

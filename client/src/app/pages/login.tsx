@@ -1,108 +1,22 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
 import { RiAiGenerate } from 'react-icons/ri';
-import { Link, useNavigate } from 'react-router-dom';
-
-import API_URL from '@/lib/config';
+import { Link } from 'react-router-dom';
 
 import ReCaptcha from '@/components/recaptcha';
 
-interface LoginResponse {
-  message: string;
-  status: number;
-  statusText: string;
-}
-
-interface LoginParams {
-  email: string;
-  password: string;
-  recaptchaToken: string;
-}
-
-async function login({
-  email,
-  password,
-  recaptchaToken,
-}: LoginParams): Promise<LoginResponse> {
-  try {
-    const { data } = await axios.post(
-      `${API_URL}/api/auth/login`,
-      {
-        email,
-        password,
-        recaptchaToken,
-      },
-      {
-        withCredentials: true,
-      }
-    );
-
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
+import useLoginForm from '@/hooks/forms/use-login-form';
 
 const LoginForm = () => {
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: login,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['auth'] });
-      navigate('/');
-    },
-    onError: error => {
-      setErrorMessage(error.message);
-    },
-  });
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const [recaptchaToken, setRecaptchaToken] = useState('');
-  const [submitEnabled, setSubmitEnabled] = useState(false);
-
-  const navigate = useNavigate();
-
-  const emailRegex =
-    /^[a-zA-Z\d._%+-]+(?:[a-zA-Z\d._%+-]*[a-zA-Z\d])?@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*\.[a-zA-Z]{2,}$/;
-
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage('');
-
-    // Validate email
-    if (!emailRegex.test(email)) {
-      setErrorMessage('Invalid email address');
-      return;
-    }
-
-    if (!passwordRegex.test(password)) {
-      setErrorMessage(
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be between 12 to 64 characters long'
-      );
-      return;
-    }
-
-    mutation.mutate({ email, password, recaptchaToken });
-  };
-
-  const handleToken = (token: string) => {
-    setRecaptchaToken(token);
-  };
-
-  useEffect(() => {
-    if (recaptchaToken.length > 0) {
-      setSubmitEnabled(true);
-    }
-  }, [recaptchaToken]);
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    errorMessage,
+    handleSubmit,
+    submitEnabled,
+    setRecaptchaToken,
+  } = useLoginForm();
 
   return (
     <>
@@ -141,7 +55,7 @@ const LoginForm = () => {
       </form>
       <ReCaptcha
         siteKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY_V2}
-        callback={handleToken}
+        callback={setRecaptchaToken}
       />
     </>
   );

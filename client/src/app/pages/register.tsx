@@ -1,158 +1,27 @@
-import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { CameraIcon } from 'lucide-react';
-import { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
-import API_URL from '@/lib/config';
-
-interface RegisterResponse {
-  message: string;
-  status: number;
-  statusText: string;
-}
-
-async function register(formData: FormData): Promise<RegisterResponse> {
-  try {
-    const { data } = await axios.post(
-      `${API_URL}/api/auth/register`,
-      formData,
-      {
-        withCredentials: true,
-      }
-    );
-
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
+import useRegisterForm from '@/hooks/forms/use-register-form';
 
 const RegisterForm = () => {
-  const mutation = useMutation({
-    mutationFn: register,
-    onSuccess: () => navigate('/'),
-    onError: error => {
-      alert(error.message);
-    },
-  });
-
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const navigate = useNavigate();
-
-  // File
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  // Name regex pattern
-  const nameRegex = /^[A-Za-z]+(?:[\s-][A-Za-z]+)*$/;
-
-  const emailRegex =
-    /^[a-zA-Z\d._%+-]+(?:[a-zA-Z\d._%+-]*[a-zA-Z\d])?@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*\.[a-zA-Z]{2,}$/;
-
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
-
-  const phoneNumberRegexConvert1 = /^\+6309\d{9}$/;
-  const phoneNumberRegexConvert2 = /^\+639\d{9}$/;
-  const phoneNumberRegexConvert3 = /^9\d{9}$/;
-
-  const phoneRegex = /^09\d{9}$/;
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // Check if theres an image
-    if (!fileInputRef.current?.files?.length) {
-      alert('Please upload an image');
-      return;
-    }
-
-    // Validate first name
-    if (!nameRegex.test(firstName)) {
-      alert('Invalid first name');
-      return;
-    }
-
-    // Validate last name
-    if (!nameRegex.test(lastName)) {
-      alert('Invalid last name');
-      return;
-    }
-
-    let convertPhone = phone;
-
-    if (phoneNumberRegexConvert1.test(phone)) {
-      // Convert +6309123456789 to 09123456789
-      convertPhone = phone.replace(/^\+6309/, '09');
-    } else if (phoneNumberRegexConvert2.test(phone)) {
-      // Convert +639123456789 to 09123456789
-      convertPhone = phone.replace(/^\+63/, '0');
-    } else if (phoneNumberRegexConvert3.test(phone)) {
-      // Convert 9123456789 to 09123456789
-      convertPhone = '0' + phone;
-    }
-
-    // Validate phone number
-    if (!phoneRegex.test(convertPhone)) {
-      alert('Invalid phone number');
-      return;
-    }
-
-    // Validate email
-    if (!emailRegex.test(email)) {
-      alert('Invalid email address');
-      return;
-    }
-
-    // Validate password
-    if (!passwordRegex.test(password)) {
-      alert(
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be between 12 to 64 characters long'
-      );
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('email', email);
-    formData.append('password', password);
-    formData.append('first_name', firstName);
-    formData.append('last_name', lastName);
-    formData.append('phone', convertPhone);
-    if (fileInputRef.current?.files) {
-      formData.append('photo_url', fileInputRef.current.files[0]);
-    }
-
-    mutation.mutate(formData);
-  };
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files ? event.target.files[0] : null;
-    if (file) {
-      const validImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
-      if (!validImageTypes.includes(file.type)) {
-        alert(
-          'Invalid file type. The image should be a jpeg, png, or webp file.'
-        );
-        return;
-      }
-      if (file.size > 5000000) {
-        // 5MB
-        alert('Invalid file size. The image should be less than 5MB.');
-        return;
-      }
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
+  const {
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    phone,
+    setPhone,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    handleSubmit,
+    fileInputRef,
+    handleFileSelect,
+    previewUrl,
+  } = useRegisterForm();
 
   return (
     <form className="flex w-full flex-col space-y-4" onSubmit={handleSubmit}>

@@ -1,24 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-
-import API_URL from '@/lib/config';
-
-async function fetchData(): Promise<{ message: string }> {
-  try {
-    const { data } = await axios.get(`${API_URL}/api`);
-
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
+import { useGetApi } from '@/hooks/home';
 
 function HomePage() {
-  const { isPending, isError, data, error } = useQuery({
-    queryKey: ['data'],
-    queryFn: fetchData,
-  });
+  const { isPending, isError, data, error } = useGetApi();
 
   if (isPending) {
     return (
