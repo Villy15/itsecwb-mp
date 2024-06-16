@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-import API_URL from '@/config';
+import API_URL from '@/lib/config';
 
 interface User {
   id: number;
@@ -71,17 +71,16 @@ function AdminPage() {
   }, [authResponse]);
 
   const {
-    isPending: isUsersPending,
     isError: isUsersError,
     data: users,
     error: usersError,
   } = useQuery({
     queryKey: ['users'],
     queryFn: fetchUsers,
-    enabled: isAuthorized,
+    enabled: !!isAuthorized,
   });
 
-  if (isAuthPending || isUsersPending) {
+  if (isAuthPending) {
     return <p>Loading...</p>;
   }
 
@@ -127,7 +126,7 @@ function AdminPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {users.map(user => (
+            {users?.map(user => (
               <tr key={user.id}>
                 <td className="whitespace-nowrap px-6 py-4">{user.id}</td>
                 <td className="whitespace-nowrap px-6 py-4">{user.email}</td>

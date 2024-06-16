@@ -1,13 +1,13 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { RiAiGenerate } from 'react-icons/ri';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+import API_URL from '@/lib/config';
 
 import ReCaptcha from '@/components/recaptcha';
-
-import API_URL from '@/config';
 
 interface LoginResponse {
   message: string;
@@ -47,9 +47,14 @@ async function login({
 }
 
 const LoginForm = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: login,
-    onSuccess: () => navigate('/'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['auth'] });
+      navigate('/');
+    },
     onError: error => {
       setErrorMessage(error.message);
     },
@@ -155,9 +160,9 @@ function LoginPage() {
         <LoginForm />
       </div>
 
-      <a href="/register" className="mt-4 text-sm hover:underline">
+      <Link to="/register" className="mt-4 text-sm hover:underline">
         Create an account?
-      </a>
+      </Link>
     </div>
   );
 }

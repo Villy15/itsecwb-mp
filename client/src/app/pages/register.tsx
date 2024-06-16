@@ -2,11 +2,11 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { CameraIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
-import API_URL from '@/config';
+import API_URL from '@/lib/config';
 
 interface RegisterResponse {
   message: string;
@@ -268,9 +268,9 @@ function RegisterPage() {
           <RegisterForm />
         </div>
 
-        <a href="/login" className="mt-8 text-sm hover:underline">
+        <Link to="/login" className="mt-8 text-sm hover:underline">
           Go back to Login
-        </a>
+        </Link>
       </div>
     </div>
   );

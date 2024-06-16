@@ -10,7 +10,7 @@ import {
   Settings,
   Users,
 } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 
@@ -50,8 +50,6 @@ const config = {
 };
 
 const Sidebar = () => {
-  const pathname = useLocation().pathname;
-
   return (
     <div className="fixed left-0 top-0 hidden h-full w-[220px] border-r bg-muted/40 md:block lg:w-[280px]">
       <div className="flex h-full flex-col gap-2">
@@ -69,34 +67,38 @@ const Sidebar = () => {
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
             {links.map((link, index) => (
               <div key={index}>
-                <a
-                  href={link.href}
-                  className={clsx(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary',
-                    {
-                      'bg-muted text-primary': pathname === link.href,
-                      'text-muted-foreground': pathname !== link.href,
-                    }
-                  )}
+                <NavLink
+                  to={link.href}
+                  className={({ isActive, isPending }) => {
+                    return clsx(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary',
+                      {
+                        'bg-muted text-primary': isActive,
+                        'text-muted-foreground': isPending,
+                      }
+                    );
+                  }}
                 >
                   <link.icon className="h-4 w-4" />
                   {link.label}
-                </a>
+                </NavLink>
                 {link.sublinks &&
                   link.sublinks.map((sublink, subIndex) => (
-                    <a
+                    <NavLink
                       key={subIndex}
-                      href={sublink.href}
-                      className={clsx(
-                        'ml-4 flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary',
-                        {
-                          'bg-muted text-primary': pathname === sublink.href,
-                          'text-muted-foreground': pathname !== sublink.href,
-                        }
-                      )}
+                      to={sublink.href}
+                      className={({ isActive, isPending }) => {
+                        return clsx(
+                          'ml-4 flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary',
+                          {
+                            'bg-muted text-primary': isActive,
+                            'text-muted-foreground': isPending,
+                          }
+                        );
+                      }}
                     >
                       {sublink.label}
-                    </a>
+                    </NavLink>
                   ))}
               </div>
             ))}

@@ -1,5 +1,7 @@
 'use client';
 
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import {
   Home,
   LineChart,
@@ -9,7 +11,9 @@ import {
   ShoppingCart,
   Users,
 } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+
+import API_URL from '@/lib/config';
 
 // import { ModeToggle } from './ModeToggle';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -24,8 +28,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-
-import API_URL from '@/config';
 
 const links = [
   { href: '/', label: 'Dashboard' },
@@ -50,14 +52,33 @@ const links = [
   },
 ];
 
-type HeaderProps = {
-  isAuthorized: boolean | null;
-};
+interface AuthResponse {
+  authorized: boolean;
+  isAdmin: boolean;
+}
 
-const Header = ({ isAuthorized }: HeaderProps) => {
+async function checkAuthorization(): Promise<AuthResponse> {
+  try {
+    const { data } = await axios.post(`${API_URL}/api/auth/checkAuth`, null, {
+      withCredentials: true,
+    });
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+const Header = () => {
   const pathname = useLocation().pathname;
-
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { data } = useQuery({
+    queryKey: ['auth'],
+    queryFn: checkAuthorization,
+  });
 
   const logout = async () => {
     try {
@@ -67,6 +88,8 @@ const Header = ({ isAuthorized }: HeaderProps) => {
       });
 
       if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ['auth'] });
+
         navigate('/login');
       } else {
         console.error('Failed to logout');
@@ -155,13 +178,13 @@ const Header = ({ isAuthorized }: HeaderProps) => {
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          {isAuthorized ? (
+          {data?.authorized ? (
             <DropdownMenuItem asChild>
               <a onClick={logout}>Logout</a>
             </DropdownMenuItem>
           ) : (
             <DropdownMenuItem asChild>
-              <a href="/login">Login</a>
+              <Link to="/login">Login</Link>
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>
