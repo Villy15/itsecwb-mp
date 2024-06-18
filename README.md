@@ -8,17 +8,24 @@
 - [ShadCN UI](https://ui.shadcn.com/) – UI Components
 - [MySQL](https://www.mysql.com) – Database
 
+- [Render]() - App Deployment
+- [Porkbun]() - Mysql Deployment
+
 ## Tools
 
 ### Client
 
-- Prettier - Formater
-- ESlint - Linter
+- axios - HTTP client
+- react-query - Server Cache State
+- react-router - Client Side Routing
+
+- prettier - Formater
+- prettier - Linter
+
 - react-icons - Icons
 
 ### Server
 
-- Colors - Colors for logging
 - mysql2 - connect to mysql
 - [cors]() - allows server to respond to requests from different origins
 - [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme) - Password hashing

@@ -31,24 +31,24 @@ export const login = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid password format" });
     }
 
-    if (!recaptchaToken)
-      return res.status(400).json({ message: "Recaptcha token is required" });
+    // if (!recaptchaToken)
+    //   return res.status(400).json({ message: "Recaptcha token is required" });
 
-    // Check if recaptcha token is valid
-    // FROM https://developers.google.com/recaptcha/docs/verify
-    const captchaResponse = await fetch(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SITE_KEY_V2}&response=${recaptchaToken}`,
-      {
-        method: "POST",
-      }
-    );
+    // // Check if recaptcha token is valid
+    // // FROM https://developers.google.com/recaptcha/docs/verify
+    // const captchaResponse = await fetch(
+    //   `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SITE_KEY_V2}&response=${recaptchaToken}`,
+    //   {
+    //     method: "POST",
+    //   }
+    // );
 
-    const captchaData = await captchaResponse.json();
+    // const captchaData = await captchaResponse.json();
 
-    if (!captchaData.success)
-      return res
-        .status(400)
-        .json({ message: "Invalid recaptcha token", captchaData: captchaData });
+    // if (!captchaData.success)
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Invalid recaptcha token", captchaData: captchaData });
 
     // Check if email exists
     const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
@@ -71,12 +71,26 @@ export const login = async (req, res, next) => {
     // assuming that the user is authenticated, delete the consecutive fails
     // await limiterConsecutiveFailsByUsernameAndIP.delete(email, req.ip);
 
-    req.session.user = {
-      email: email,
-      role: rows[0].role,
-    };
+    // regenerate the session, which is good practice to help
+    // guard against forms of session fixation
+    req.session.regenerate(function (err) {
+      if (err) next(err);
 
-    res.status(200).json({ message: "User logged in successfully" });
+      // store user information in session, typically a user id
+      req.session.user = {
+        email: email,
+        role: "guest",
+      };
+
+      // save the session before sending the response
+      // load does not happen before session is saved
+      req.session.save(function (err) {
+        if (err) return next(err);
+        console.log(req.session);
+
+        res.status(200).json({ message: "User logged in successfully" });
+      });
+    });
   } catch (err) {
     const error = new Error(err.message);
     error.status = 400;
@@ -196,12 +210,26 @@ export const register = async (req, res, next) => {
       [email, hash, first_name, last_name, photo_url, phone]
     );
 
-    req.session.user = {
-      email: email,
-      role: "guest",
-    };
+    // regenerate the session, which is good practice to help
+    // guard against forms of session fixation
+    req.session.regenerate(function (err) {
+      if (err) next(err);
 
-    res.status(201).json({ message: "User registered successfully" });
+      // store user information in session, typically a user id
+      req.session.user = {
+        email: email,
+        role: "guest",
+      };
+
+      // save the session before sending the response
+      // load does not happen before session is saved
+      req.session.save(function (err) {
+        if (err) return next(err);
+        console.log(req.session.user);
+
+        res.status(201).json({ message: "User registered successfully" });
+      });
+    });
   } catch (err) {
     const error = new Error(err.message);
     error.status = 400;
@@ -215,6 +243,8 @@ export const register = async (req, res, next) => {
  */
 export const checkAuth = async (req, res, next) => {
   try {
+    console.log(req.session);
+
     if (req.session.user) {
       if (req.session.user.role === "admin") {
         return res.status(200).json({

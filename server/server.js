@@ -53,11 +53,12 @@ app.use(
   session({
     secret: "your-secret-key",
     resave: false,
+    store: new session.MemoryStore(),
     saveUninitialized: true,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
-      secure: false,
-    }, // set natin to true if nag https na tayo
+      secure: process.env.NODE_ENV === "production" ? true : false,
+    },
   })
 );
 
