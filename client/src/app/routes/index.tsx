@@ -1,14 +1,15 @@
-import AdminPage from '../pages/admin';
-import HomePage from '../pages/home';
-import LoginPage from '../pages/login';
-import RegisterPage from '../pages/register';
 import { createBrowserRouter } from 'react-router-dom';
 
 import AuthLayout from '@/components/layouts/auth-layout';
 import RootLayout from '@/components/layouts/root-layout';
 
-import NotFoundPage from './not-found';
-import ProtectedRoute from './protected-route';
+import AdminPage from '@/app/pages/admin';
+import DiscussionsPage from '@/app/pages/discussions';
+import HomePage from '@/app/pages/home';
+import LoginPage from '@/app/pages/login';
+import RegisterPage from '@/app/pages/register';
+import NotFoundPage from '@/app/routes/not-found';
+import ProtectedRoute from '@/app/routes/protected-route';
 
 export const router = createBrowserRouter([
   {
@@ -34,8 +35,12 @@ export const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
     children: [
       {
-        index: true,
+        path: '',
         element: <HomePage />,
+      },
+      {
+        path: 'discussions',
+        element: <DiscussionsPage />,
       },
       {
         path: 'admin',

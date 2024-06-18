@@ -13,6 +13,7 @@ import { __dirname } from "./utils/dirname.js";
 
 // Import routes
 import auth from "./routes/auth.js";
+import discussions from "./routes/discussions.js";
 import users from "./routes/users.js";
 
 // Import middleware
@@ -73,6 +74,7 @@ app.get("/api", (req, res) => {
 // Use routes
 app.use("/api/users", users);
 app.use("/api/auth", auth);
+app.use("/api/discussions", discussions);
 
 // Catch all error
 app.use(notFound);

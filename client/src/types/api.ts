@@ -17,3 +17,9 @@ export type User = Entity<{
   phone: string | null;
   enable: number;
 }>;
+
+export type Discussion = Entity<{
+  title: string;
+  description: string;
+  author_id: string;
+}>;

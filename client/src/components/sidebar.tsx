@@ -3,9 +3,8 @@
 import clsx from 'clsx';
 import {
   Bell,
-  GanttChartSquare,
   Home,
-  Package,
+  MessageCircle,
   Package2,
   Settings,
   Users,
@@ -16,27 +15,8 @@ import { Button } from '@/components/ui/button';
 
 const links = [
   { href: '/', icon: Home, label: 'Dashboard' },
+  { href: '/discussions', icon: MessageCircle, label: 'Discussions' },
   { href: '/admin', icon: Users, label: 'Admin' },
-  {
-    href: '/reports',
-    icon: GanttChartSquare,
-    label: 'Reports',
-    sublinks: [
-      { href: '/reports/replenish', label: 'Replenish Report' },
-      { href: '/reports/expired', label: 'Expired Report' },
-      { href: '/reports/descrepancy', label: 'Descrepancy Report' },
-      { href: '/reports/physical-count', label: 'Physical Count Report' },
-    ],
-  },
-  {
-    href: '/inventory',
-    icon: Package,
-    label: 'Inventory',
-    sublinks: [
-      { href: '/inventory/low-stock', label: 'Low Stock' },
-      { href: '/inventory/variants', label: 'Variants' },
-    ],
-  },
 ];
 
 const settings = {
@@ -82,24 +62,6 @@ const Sidebar = () => {
                   <link.icon className="h-4 w-4" />
                   {link.label}
                 </NavLink>
-                {link.sublinks &&
-                  link.sublinks.map((sublink, subIndex) => (
-                    <NavLink
-                      key={subIndex}
-                      to={sublink.href}
-                      className={({ isActive, isPending }) => {
-                        return clsx(
-                          'ml-4 flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary',
-                          {
-                            'bg-muted text-primary': isActive,
-                            'text-muted-foreground': isPending,
-                          }
-                        );
-                      }}
-                    >
-                      {sublink.label}
-                    </NavLink>
-                  ))}
               </div>
             ))}
           </nav>
