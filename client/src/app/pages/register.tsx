@@ -1,7 +1,8 @@
 import { CameraIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 
 import useRegisterForm from '@/hooks/forms/use-register-form';
 
@@ -21,6 +22,7 @@ const RegisterForm = () => {
     fileInputRef,
     handleFileSelect,
     previewUrl,
+    registerMutation,
   } = useRegisterForm();
 
   return (
@@ -79,12 +81,15 @@ const RegisterForm = () => {
         Passwords should be at least 16 characters, 1 uppercase, 1 lowercase, 1
         number, 1 special
       </div>
-      <button
+      <Button
         type="submit"
-        className="rounded bg-orange-400 p-2 text-white hover:bg-orange-500"
+        className={
+          'inline-flex rounded bg-orange-400 p-2 text-white hover:bg-orange-500'
+        }
+        isLoading={registerMutation.isPending}
       >
         Register
-      </button>
+      </Button>
     </form>
   );
 };
@@ -127,6 +132,9 @@ const UploadAvatar = ({
 };
 
 function RegisterPage() {
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo');
+
   return (
     <div className="flex grow flex-row">
       <div className="flex grow flex-col items-center justify-center">
@@ -136,8 +144,10 @@ function RegisterPage() {
         <div className="flex w-full max-w-sm items-center justify-center">
           <RegisterForm />
         </div>
-
-        <Link to="/login" className="mt-8 text-sm hover:underline">
+        <Link
+          to={`/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
+          className="mt-4 text-sm hover:underline"
+        >
           Go back to Login
         </Link>
       </div>

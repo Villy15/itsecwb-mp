@@ -51,6 +51,7 @@ const useLoginForm = () => {
     handleSubmit,
     submitEnabled,
     setRecaptchaToken,
+    loginMutation,
   };
 };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
   Home,
@@ -73,7 +73,7 @@ async function checkAuthorization(): Promise<AuthResponse> {
 const Header = () => {
   const pathname = useLocation().pathname;
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const { data } = useQuery({
     queryKey: ['auth'],
@@ -88,8 +88,7 @@ const Header = () => {
       });
 
       if (response.ok) {
-        queryClient.invalidateQueries({ queryKey: ['auth'] });
-
+        // queryClient.invalidateQueries({ queryKey: ['auth'] });
         navigate('/login');
       } else {
         console.error('Failed to logout');

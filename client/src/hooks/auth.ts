@@ -1,13 +1,8 @@
-import {
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { api } from '@/lib/api-client';
-import { MutationConfig, QueryConfig } from '@/lib/react-query';
+import { MutationConfig, QueryConfig, queryClient } from '@/lib/react-query';
 
 /**
  * Login
@@ -42,18 +37,22 @@ type UseLoginOptions = {
 };
 
 export const useLogin = ({ mutationConfig }: UseLoginOptions = {}) => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo');
 
   return useMutation({
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
         queryKey: checkAuthQueryOptions().queryKey,
       });
-      navigate('/');
+      navigate(`${redirectTo ? `${redirectTo}` : '/'}`, {
+        replace: true,
+      });
 
       onSuccess?.(...args);
     },
@@ -81,7 +80,7 @@ type UseRegisterOptions = {
 };
 
 export const useRegister = ({ mutationConfig }: UseRegisterOptions = {}) => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
@@ -89,9 +88,9 @@ export const useRegister = ({ mutationConfig }: UseRegisterOptions = {}) => {
 
   return useMutation({
     onSuccess: (...args) => {
-      queryClient.invalidateQueries({
-        queryKey: checkAuthQueryOptions().queryKey,
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: checkAuthQueryOptions().queryKey,
+      // });
       navigate('/');
 
       onSuccess?.(...args);

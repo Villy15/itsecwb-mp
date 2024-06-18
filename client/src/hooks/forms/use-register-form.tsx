@@ -123,6 +123,7 @@ const useRegisterForm = () => {
     fileInputRef,
     handleFileSelect,
     previewUrl,
+    registerMutation,
   };
 };
 

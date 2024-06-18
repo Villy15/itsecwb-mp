@@ -1,8 +1,9 @@
 import clsx from 'clsx';
 import { RiAiGenerate } from 'react-icons/ri';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import ReCaptcha from '@/components/recaptcha';
+import { Button } from '@/components/ui/button';
 
 import useLoginForm from '@/hooks/forms/use-login-form';
 
@@ -16,6 +17,7 @@ const LoginForm = () => {
     handleSubmit,
     submitEnabled,
     setRecaptchaToken,
+    loginMutation,
   } = useLoginForm();
 
   return (
@@ -40,15 +42,20 @@ const LoginForm = () => {
           onChange={e => setPassword(e.target.value)}
           name="password" // Add name attribute for FormData
         />
-        <button
-          disabled={!submitEnabled}
+        <Button
           type="submit"
-          className={clsx('rounded bg-blue-500 p-2 text-white', {
-            'cursor-not-allowed bg-gray-300': !submitEnabled,
-          })}
+          disabled={!submitEnabled}
+          className={clsx(
+            'inline-flex rounded bg-orange-400 p-2 text-white hover:bg-orange-500',
+            {
+              'cursor-not-allowed bg-gray-300': !submitEnabled,
+            }
+          )}
+          isLoading={loginMutation.isPending}
         >
-          Login
-        </button>
+          Log in
+        </Button>
+
         {errorMessage && (
           <p className="text-center text-red-500">{errorMessage}</p>
         )}
@@ -62,6 +69,9 @@ const LoginForm = () => {
 };
 
 function LoginPage() {
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo');
+
   return (
     <div className="flex grow flex-col items-center justify-center">
       <div className="mb-4 flex flex-col items-center justify-center">
@@ -74,8 +84,11 @@ function LoginPage() {
         <LoginForm />
       </div>
 
-      <Link to="/register" className="mt-4 text-sm hover:underline">
-        Create an account?
+      <Link
+        to={`/register${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
+        className="mt-4 text-sm hover:underline"
+      >
+        Register
       </Link>
     </div>
   );

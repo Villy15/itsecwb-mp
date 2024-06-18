@@ -8,10 +8,29 @@ import AuthLayout from '@/components/layouts/auth-layout';
 import RootLayout from '@/components/layouts/root-layout';
 
 import NotFoundPage from './not-found';
+import ProtectedRoute from './protected-route';
 
 export const router = createBrowserRouter([
   {
-    element: <RootLayout />,
+    element: <AuthLayout />,
+    children: [
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+      {
+        path: '/register',
+        element: <RegisterPage />,
+      },
+    ],
+  },
+  {
+    path: '/',
+    element: (
+      <ProtectedRoute>
+        <RootLayout />
+      </ProtectedRoute>
+    ),
     errorElement: <NotFoundPage />,
     children: [
       {
@@ -25,16 +44,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    element: <AuthLayout />,
-    children: [
-      {
-        path: '/login',
-        element: <LoginPage />,
-      },
-      {
-        path: '/register',
-        element: <RegisterPage />,
-      },
-    ],
+    path: '*',
+    element: <NotFoundPage />,
   },
 ]);
