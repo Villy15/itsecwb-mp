@@ -1,5 +1,6 @@
 import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { api } from '@/lib/api-client';
 import { MutationConfig, QueryConfig, queryClient } from '@/lib/react-query';
@@ -54,7 +55,32 @@ export const useLogin = ({ mutationConfig }: UseLoginOptions = {}) => {
         replace: true,
       });
 
+      toast.success('Logged in', {
+        dismissible: true,
+        cancel: {
+          label: 'Close',
+          onClick: () => {},
+        },
+        duration: 1000,
+        position: 'top-right',
+      });
+
       onSuccess?.(...args);
+    },
+    onError: error => {
+      if (error.message === 'Request failed with status code 404') {
+        error.message = 'Invalid email or password';
+      }
+      toast.error('Error logging in', {
+        dismissible: true,
+        cancel: {
+          label: 'Close',
+          onClick: () => {},
+        },
+        duration: 3000,
+        description: error.message,
+        position: 'top-right',
+      });
     },
     ...restConfig,
     mutationFn: login,

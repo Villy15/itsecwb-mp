@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 
@@ -14,6 +15,16 @@ const AddDisucssionForm = () => {
     // Handle form submission here
     console.log('Title:', title);
     console.log('Body:', body);
+
+    toast.success('Discussion added sucessfully', {
+      dismissible: true,
+      cancel: {
+        label: 'Close',
+        onClick: () => {},
+      },
+      duration: 3000,
+      position: 'top-right',
+    });
 
     // Redirect to discussions page
     navigate('/discussions');

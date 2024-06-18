@@ -1,6 +1,7 @@
 import { useGetDiscussions } from '../api/discussions';
 import { Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -64,7 +65,22 @@ const DiscussionsList = () => {
             <TableCell>{formatDate(data.created_at)}</TableCell>
             <TableCell>{data.author_id}</TableCell>
             <TableCell>
-              <Button variant="destructive" icon={<Trash className="size-4" />}>
+              <Button
+                onClick={event => {
+                  event.stopPropagation(); // Prevent row click
+                  toast.error('Delete not implemented', {
+                    dismissible: true,
+                    cancel: {
+                      label: 'Close',
+                      onClick: () => {},
+                    },
+                    duration: 3000,
+                    position: 'top-right',
+                  });
+                }}
+                variant="destructive"
+                icon={<Trash className="size-4" />}
+              >
                 Delete
               </Button>
             </TableCell>

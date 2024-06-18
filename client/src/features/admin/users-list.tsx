@@ -1,5 +1,6 @@
 import { Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -86,6 +87,17 @@ const UsersList = () => {
                   <TableCell>{formatDate(user.created_at)}</TableCell>
                   <TableCell>
                     <Button
+                      onClick={() => {
+                        toast.error('Delete not implemented', {
+                          dismissible: true,
+                          cancel: {
+                            label: 'Close',
+                            onClick: () => {},
+                          },
+                          duration: 3000,
+                          position: 'top-right',
+                        });
+                      }}
                       variant="destructive"
                       icon={<Trash className="size-4" />}
                     >

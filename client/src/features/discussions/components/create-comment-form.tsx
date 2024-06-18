@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 
@@ -13,6 +14,22 @@ const CreateCommentForm = ({ setDidCreateComment }: CreateCommentFormProps) => {
     event.preventDefault();
     // Handle form submission here
     console.log('Comment:', comment);
+
+    // Reset comment
+    setComment('');
+
+    // Redirect to discussions page
+    setDidCreateComment(false);
+
+    toast.success('Comment added sucessfully', {
+      dismissible: true,
+      cancel: {
+        label: 'Close',
+        onClick: () => {},
+      },
+      duration: 3000,
+      position: 'top-right',
+    });
   };
 
   return (
