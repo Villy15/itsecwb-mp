@@ -8,6 +8,8 @@ import session from "express-session";
 import helmet from "helmet";
 import path from "path";
 
+import { checkDbConnection, logDbDetails } from "./db.js";
+
 // Import dirname
 import { __dirname } from "./utils/dirname.js";
 
@@ -82,4 +84,8 @@ app.use(notFound);
 // Error handler
 app.use(errorHandler);
 
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+app.listen(port, async () => {
+  console.log(`Server is running on port ${port}`);
+  logDbDetails();
+  await checkDbConnection();
+});

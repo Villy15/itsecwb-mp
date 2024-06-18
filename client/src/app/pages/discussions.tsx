@@ -1,4 +1,5 @@
 import { PlusIcon, Trash } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { ContentLayout } from '@/components/layouts/content-layout';
 import { Button } from '@/components/ui/button';
@@ -16,8 +17,15 @@ import { useGetDiscussions } from '@/hooks/discussions';
 import { formatDate } from '@/utils/date-format';
 
 const CreateDiscussion = () => {
+  const navigate = useNavigate();
+
   return (
-    <Button icon={<PlusIcon />} onClick={() => {}}>
+    <Button
+      icon={<PlusIcon />}
+      onClick={() => {
+        navigate('/discussions/add');
+      }}
+    >
       Create Discussion
     </Button>
   );
@@ -61,7 +69,7 @@ const DiscussionsList = () => {
           <TableRow
             key={data.id}
             onClick={() => {
-              console.log('hi');
+              console.log('read discussion');
             }}
             className="cursor-pointer hover:bg-gray-100"
           >
