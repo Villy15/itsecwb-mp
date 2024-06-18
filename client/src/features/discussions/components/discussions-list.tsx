@@ -1,5 +1,6 @@
 import { useGetDiscussions } from '../api/discussions';
 import { Trash } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -16,6 +17,8 @@ import { formatDate } from '@/utils/date-format';
 
 const DiscussionsList = () => {
   const { data, isLoading, isError, error } = useGetDiscussions();
+
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -52,7 +55,7 @@ const DiscussionsList = () => {
           <TableRow
             key={data.id}
             onClick={() => {
-              console.log('read discussion');
+              navigate(`/discussions/${data.id}`);
             }}
             className="cursor-pointer hover:bg-gray-100"
           >

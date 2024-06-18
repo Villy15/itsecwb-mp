@@ -4,6 +4,7 @@ import AuthLayout from '@/components/layouts/auth-layout';
 import RootLayout from '@/components/layouts/root-layout';
 
 import AddDisucussionPage from './app/add-discussion-page';
+import ReadDiscussionPage from './app/read-discussion-page';
 import AdminPage from '@/app/routes/app/admin-page';
 import HomePage from '@/app/routes/app/dashboard-page';
 import DiscussionsPage from '@/app/routes/app/discussions-page';
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
           {
             path: '',
             element: <DiscussionsPage />,
+          },
+          {
+            path: ':discussionId',
+            element: <ReadDiscussionPage />,
           },
           {
             path: 'add',

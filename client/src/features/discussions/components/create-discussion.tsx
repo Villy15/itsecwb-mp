@@ -8,7 +8,7 @@ const CreateDiscussion = () => {
 
   return (
     <Button
-      icon={<PlusIcon />}
+      icon={<PlusIcon className="size-4" />}
       onClick={() => {
         navigate('/discussions/add');
       }}
