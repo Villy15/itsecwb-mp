@@ -3,11 +3,12 @@ import { createBrowserRouter } from 'react-router-dom';
 import AuthLayout from '@/components/layouts/auth-layout';
 import RootLayout from '@/components/layouts/root-layout';
 
-import AdminPage from '@/app/routes/app/admin';
-import DiscussionsPage from '@/app/routes/app/discussions';
-import HomePage from '@/app/routes/app/home';
-import LoginPage from '@/app/routes/auth/login';
-import RegisterPage from '@/app/routes/auth/register';
+import AddDisucussionPage from './app/add-discussion-page';
+import AdminPage from '@/app/routes/app/admin-page';
+import HomePage from '@/app/routes/app/dashboard-page';
+import DiscussionsPage from '@/app/routes/app/discussions-page';
+import LoginPage from '@/app/routes/auth/login-page';
+import RegisterPage from '@/app/routes/auth/register-page';
 import NotFoundPage from '@/app/routes/not-found';
 import ProtectedRoute from '@/app/routes/protected-route';
 
@@ -47,7 +48,7 @@ export const router = createBrowserRouter([
           },
           {
             path: 'add',
-            element: <div>Add Discussion</div>,
+            element: <AddDisucussionPage />,
           },
         ],
       },

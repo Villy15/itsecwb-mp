@@ -2,7 +2,7 @@ import { ContentLayout } from '@/components/layouts/content-layout';
 
 import DashboardContent from '@/features/dashboard/dashboard-content';
 
-function HomePage() {
+function DashboardPage() {
   return (
     <ContentLayout title="Dashboard">
       <DashboardContent />
@@ -10,4 +10,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default DashboardPage;
