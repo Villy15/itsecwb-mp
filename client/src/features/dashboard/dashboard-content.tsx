@@ -1,24 +1,6 @@
-import { ContentLayout } from '@/components/layouts/content-layout';
-
-import { useGetApi } from '@/hooks/home';
-
-function HomePage() {
-  const { isPending, isError, error } = useGetApi();
-
-  if (isPending) {
-    return (
-      <div className="p-6">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return <p>Error: {error.message}</p>;
-  }
-
+const DashboardContent = () => {
   return (
-    <ContentLayout title="Dashboard">
+    <>
       <h1 className="text-xl">
         Welcome <b>{`Adrian Villanueva  `}</b>
       </h1>
@@ -33,8 +15,8 @@ function HomePage() {
         <li>Comment on discussions</li>
         <li>Delete all comments</li>
       </ul>
-    </ContentLayout>
+    </>
   );
-}
+};
 
-export default HomePage;
+export default DashboardContent;

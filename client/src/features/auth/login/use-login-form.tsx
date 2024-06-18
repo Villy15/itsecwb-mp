@@ -1,6 +1,5 @@
+import { useLogin } from '../../../hooks/auth';
 import { useEffect, useState } from 'react';
-
-import { useLogin } from '@/hooks/auth';
 
 const useLoginForm = () => {
   const loginMutation = useLogin();

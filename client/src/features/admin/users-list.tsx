@@ -1,7 +1,6 @@
 import { Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { ContentLayout } from '@/components/layouts/content-layout';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -12,11 +11,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import { useGetUsers } from '@/features/admin/get-users';
 import { useCheckAuth } from '@/hooks/auth';
-import { useGetUsers } from '@/hooks/users';
 import { formatDate } from '@/utils/date-format';
 
-function AdminPage() {
+const UsersList = () => {
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   const {
@@ -51,7 +50,7 @@ function AdminPage() {
   }
 
   return (
-    <ContentLayout title="Admin">
+    <>
       <div className="p-6">
         {!isAuthorized ? (
           <p>You are not authorized to view this page</p>
@@ -99,8 +98,8 @@ function AdminPage() {
           </Table>
         )}
       </div>
-    </ContentLayout>
+    </>
   );
-}
+};
 
-export default AdminPage;
+export default UsersList;

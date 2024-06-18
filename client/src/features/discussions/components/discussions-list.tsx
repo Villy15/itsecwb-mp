@@ -1,7 +1,6 @@
-import { PlusIcon, Trash } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useGetDiscussions } from '../api/discussions';
+import { Trash } from 'lucide-react';
 
-import { ContentLayout } from '@/components/layouts/content-layout';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import {
@@ -13,23 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { useGetDiscussions } from '@/hooks/discussions';
 import { formatDate } from '@/utils/date-format';
-
-const CreateDiscussion = () => {
-  const navigate = useNavigate();
-
-  return (
-    <Button
-      icon={<PlusIcon />}
-      onClick={() => {
-        navigate('/discussions/add');
-      }}
-    >
-      Create Discussion
-    </Button>
-  );
-};
 
 const DiscussionsList = () => {
   const { data, isLoading, isError, error } = useGetDiscussions();
@@ -89,17 +72,4 @@ const DiscussionsList = () => {
   );
 };
 
-function DiscussionsPage() {
-  return (
-    <ContentLayout title="Discussions">
-      <div className="flex justify-end">
-        <CreateDiscussion />
-      </div>
-      <div className="mt-4">
-        <DiscussionsList />
-      </div>
-    </ContentLayout>
-  );
-}
-
-export default DiscussionsPage;
+export default DiscussionsList;

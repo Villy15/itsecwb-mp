@@ -1,10 +1,9 @@
+import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
 import { CameraIcon } from 'lucide-react';
-import { Link, useSearchParams } from 'react-router-dom';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
-import useRegisterForm from '@/hooks/forms/use-register-form';
+import useRegisterForm from '@/features/auth/register/use-register-form';
 
 const RegisterForm = () => {
   const {
@@ -131,28 +130,4 @@ const UploadAvatar = ({
   );
 };
 
-function RegisterPage() {
-  const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo');
-
-  return (
-    <div className="flex grow flex-row">
-      <div className="flex grow flex-col items-center justify-center">
-        <div className="mb-4 flex flex-col items-center justify-center">
-          <div className="mb-4 text-2xl font-bold">Create Your Account</div>
-        </div>
-        <div className="flex w-full max-w-sm items-center justify-center">
-          <RegisterForm />
-        </div>
-        <Link
-          to={`/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
-          className="mt-4 text-sm hover:underline"
-        >
-          Go back to Login
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-export default RegisterPage;
+export default RegisterForm;
