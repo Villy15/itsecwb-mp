@@ -24,7 +24,7 @@ import errorHandler from "./middleware/error.js";
 import logger from "./middleware/logger.js";
 import notFound from "./middleware/not-found.js";
 
-const port = process.env.PORT || 5000;
+const port = 5000;
 const app = express();
 
 // Middlewares
@@ -89,6 +89,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(port, async () => {
+  console.log(`${typeof port}`);
   console.log(`Server is running on port ${port}`);
   logDbDetails();
   await checkDbConnection();
