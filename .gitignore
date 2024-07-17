@@ -5,3 +5,4 @@ server/assets/Carbonara.jpeg
 server/assets/testing_4_file_valid.jpeg
 server/assets/webp_picture.webp
 logging_server/node_modules/
+**/logs/
