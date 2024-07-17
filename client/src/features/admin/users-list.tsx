@@ -1,7 +1,17 @@
 import { Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -12,11 +22,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import { useDeleteUser } from './delete-user';
 import { useGetUsers } from '@/features/admin/get-users';
 import { useCheckAuth } from '@/hooks/auth';
 import { formatDate } from '@/utils/date-format';
 
 const UsersList = () => {
+  const deleteUserMutation = useDeleteUser();
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   const {
@@ -50,6 +62,37 @@ const UsersList = () => {
     return <p>Error: {authError?.message || usersError?.message}</p>;
   }
 
+  const AlertDialogDeleteUser = ({ id }: { id: string }) => {
+    return (
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="destructive" icon={<Trash className="size-4" />}>
+            Delete
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              user.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                deleteUserMutation.mutate({ id: id });
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  };
+
   return (
     <>
       <div className="p-6">
@@ -70,42 +113,30 @@ const UsersList = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users?.map(user => (
-                <TableRow key={user.id}>
-                  <TableCell>
-                    <img
-                      className="h-10 w-10 rounded-full"
-                      src={user.photo_url || ''}
-                      alt={user.photo_url || 'user-photo'}
-                    />
-                  </TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.role}</TableCell>
-                  <TableCell>{user.first_name}</TableCell>
-                  <TableCell>{user.last_name}</TableCell>
-                  <TableCell>{user.phone}</TableCell>
-                  <TableCell>{formatDate(user.created_at)}</TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() => {
-                        toast.error('Delete not implemented', {
-                          dismissible: true,
-                          cancel: {
-                            label: 'Close',
-                            onClick: () => {},
-                          },
-                          duration: 3000,
-                          position: 'top-right',
-                        });
-                      }}
-                      variant="destructive"
-                      icon={<Trash className="size-4" />}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {users?.map(user => {
+                return (
+                  <TableRow key={user.id}>
+                    <TableCell>
+                      <img
+                        className="h-10 w-10 rounded-full"
+                        src={user.photo_url || ''}
+                        alt={user.photo_url || 'user-photo'}
+                      />
+                    </TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.role}</TableCell>
+                    <TableCell>{user.first_name}</TableCell>
+                    <TableCell>{user.last_name}</TableCell>
+                    <TableCell>{user.phone}</TableCell>
+                    <TableCell>{formatDate(user.created_at)}</TableCell>
+                    <TableCell>
+                      {authResponse.email !== user.email && (
+                        <AlertDialogDeleteUser id={user.id} />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         )}
