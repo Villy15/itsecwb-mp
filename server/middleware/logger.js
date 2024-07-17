@@ -7,30 +7,54 @@ import { fileURLToPath } from "url";
 // create a __dirname variable to store the current directory
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// create a logFilePath so that we can write logs to a file
-const logFilePath = path.join(__dirname, "../logs/access.log");
+// create a folder called logs
+const logFolder = path.join(__dirname, "../logs");
+if (!fs.existsSync(logFolder)) {
+  fs.mkdirSync(logFolder, { recursive: true });
+
+}
+
+// generate a filename based on the current date
+const currentDate = new Date();
+const currentDateString = currentDate.toISOString().split("T")[0];
+const logFileName = `${currentDateString}.log`;
+
+// create a file called access.txt
+const logFilePath = path.join(logFolder, logFileName);
 
 const logger = (req, res, next) => {
-  const methodColors = {
-    GET: colors.green,
-    POST: colors.blue,
-    PUT: colors.yellow,
-    DELETE: colors.white,
-  };
+  const start = Date.now();
 
-  const color = methodColors[req.method] || colors.white;
-  // create a log message
-  const logMessage = `${req.method} ${req.protocol}://${req.get("host")}${req.originalUrl}`;
+  // finish event
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    const methodColors = {
+      GET: colors.green,
+      POST: colors.blue,
+      PUT: colors.yellow,
+      DELETE: colors.white,
+    };
+    const color = methodColors[req.method] || colors.white;
+    const timestamp = new Date().toISOString();
 
-  // write the log message to the log file
-  fs.appendFileSync(logFilePath, color(logMessage) + "\n");
+    const logMessage = `[${timestamp}] - ${req.method} ${req.protocol}://${req.get("host")}${req.originalUrl} || STATUS CODE: ${res.statusCode} || RESPONSE TIME: ${duration}ms`;
 
-  console.log(
-    color(
-      `${req.method} ${req.protocol}://${req.get("host")}${req.originalUrl}`
-    )
-  );
+    console.log(color(logMessage));
 
+    fs.appendFile(logFilePath, `${logMessage}\n`, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+
+    // console.log(
+    //   color(
+    //     `${req.method} ${req.protocol}://${req.get("host")}${req.originalUrl}`
+    //   )
+    // );
+  });
+
+  
   next();
 };
 

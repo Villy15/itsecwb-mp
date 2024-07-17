@@ -41,6 +41,13 @@ app.use(
 );
 app.use(express.json()); // Able to send JSON data
 app.use(express.urlencoded({ extended: true })); // Able to send form data
+
+app.use((req, res, next) => {
+  res.requestTime = Date.now();
+
+  next();
+});
+
 app.use(logger);
 app.use(
   helmet({

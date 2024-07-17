@@ -115,12 +115,12 @@ export const register = async (req, res, next) => {
 
     // First name regex validation
     if (!nameRegex.test(first_name)) {
-      res.status(400).json({ message: "Invalid first name format" });
+      return res.status(400).json({ message: "Invalid first name format" });
     }
 
-    // Email regex validation
+    // Last name regex validation
     if (!nameRegex.test(last_name)) {
-      res.status(400).json({ message: "Invalid last name format" });
+      return res.status(400).json({ message: "Invalid last name format" });
     }
 
     // Email regex pattern
@@ -129,14 +129,14 @@ export const register = async (req, res, next) => {
 
     // Email regex validation
     if (!emailRegex.test(email)) {
-      res.status(400).json({ message: "Invalid email format" });
+      return res.status(400).json({ message: "Invalid email format" });
     }
 
     // Password regex pattern
     const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{12,64}$/;
 
     if (!passwordRegex.test(password)) {
-      res.status(400).json({ message: "Invalid password format" });
+      return res.status(400).json({ message: "Invalid password format" });
     }
 
     // Convert phone number format
@@ -159,18 +159,10 @@ export const register = async (req, res, next) => {
     // Phone number regex pattern (09xxxxxxxxx format)
     const phoneRegex = /^09\d{9}$/;
     if (!phoneRegex.test(convertedPhone)) {
-      res.status(400).json({ message: "Invalid phone number format" });
+      return res.status(400).json({ message: "Invalid phone number format" });
     }
 
-    // console.log({
-    //   email,
-    //   first_name,
-    //   last_name,
-    //   convertedPhone,
-    //   password,
-    // });
-
-    // Checks if email already exists !! I'm not sure if dapat malaman nila if user already exists
+    // Checks if email already exists
     const [existingUsers] = await pool.query(
       "SELECT * FROM users WHERE email = ?",
       [email]
@@ -181,7 +173,6 @@ export const register = async (req, res, next) => {
     }
 
     // Check if photo is uploaded
-    // from https://github.com/richardgirges/express-fileupload/tree/master/example
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).send("No files were uploaded.");
     }
@@ -201,43 +192,38 @@ export const register = async (req, res, next) => {
 
     const uploadPath = path.join(__dirname, "assets", photo.name);
     await photo.mv(uploadPath);
+
     // Initializes the photo_url for the database
     const photo_url = `${HOST_URL}/assets/${photo.name}`;
 
     // Hashes the password
     const hash = await bcrypt.hash(req.body.password, 10);
 
-    const [rows] = await pool.query(
+    await pool.query(
       "INSERT INTO users (email, password, first_name, last_name, photo_url, phone) VALUES (?, ?, ?, ?, ?, ?)",
-      [email, hash, first_name, last_name, photo_url, phone]
+      [email, hash, first_name, last_name, photo_url, convertedPhone]
     );
 
-    // regenerate the session, which is good practice to help
-    // guard against forms of session fixation
     req.session.regenerate(function (err) {
-      if (err) next(err);
+      if (err) return next(err);
 
-      // store user information in session, typically a user id
       req.session.user = {
         email: email,
         role: "guest",
       };
 
-      // save the session before sending the response
-      // load does not happen before session is saved
+      // Save the session before sending the response
       req.session.save(function (err) {
         if (err) return next(err);
-        // console.log(req.session.user);
 
-        res.status(201).json({ message: "User registered successfully" });
+        return res.status(201).json({ message: "User registered successfully" });
       });
     });
   } catch (err) {
-    const error = new Error(err.message);
-    error.status = 400;
-    return next(error);
+    return next(err);
   }
 };
+
 
 /**
  * @desc Check authentication
