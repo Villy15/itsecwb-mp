@@ -8,7 +8,7 @@ const useLoginForm = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [submitEnabled, setSubmitEnabled] = useState(false);
-  const [recaptchaToken, setRecaptchaToken] = useState('test');
+  const [recaptchaToken, setRecaptchaToken] = useState('');
 
   const emailRegex =
     /^[a-zA-Z\d._%+-]+(?:[a-zA-Z\d._%+-]*[a-zA-Z\d])?@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*\.[a-zA-Z]{2,}$/;
@@ -38,7 +38,12 @@ const useLoginForm = () => {
   };
 
   useEffect(() => {
-    setSubmitEnabled(recaptchaToken.length > 0);
+    if (import.meta.env.VITE_NODE_ENV === 'development') {
+      setSubmitEnabled(true);
+    } else {
+      // Enable submit button only if recaptchaToken is set
+      setSubmitEnabled(recaptchaToken.length > 0);
+    }
   }, [recaptchaToken]);
 
   return {
