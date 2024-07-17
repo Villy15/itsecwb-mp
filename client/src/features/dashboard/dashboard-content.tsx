@@ -1,7 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import { useCheckAuth } from '@/hooks/auth';
 
 const DashboardContent = () => {
-  const [isAdmin] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  const {
+    isPending: isAuthPending,
+    isError: isAuthError,
+    data: authResponse,
+    error: authError,
+  } = useCheckAuth();
+
+  useEffect(() => {
+    if (authResponse) {
+      if (authResponse.authorized && authResponse.isAdmin) {
+        setIsAuthorized(true);
+      } else {
+        setIsAuthorized(false);
+      }
+    }
+  }, [authResponse]);
 
   const adminpPivileges = [
     'Create discussions',
@@ -19,15 +38,25 @@ const DashboardContent = () => {
     'Delete own comments',
   ];
 
+  if (isAuthPending) {
+    return <p>Loading...</p>;
+  }
+
+  if (isAuthError) {
+    return <p>Error: {authError?.message}</p>;
+  }
+
   return (
     <>
       <h1 className="text-xl">
-        Welcome <b>{`Adrian Villanueva  `}</b>
+        Welcome <b>{`${authResponse.first_name} ${authResponse.last_name}`}</b>
       </h1>
-      <h4 className="my-3">Your role is : {isAdmin ? 'ADMIN' : 'GUEST'}</h4>
+      <h4 className="my-3">
+        Your role is : {isAuthorized ? 'ADMIN' : 'GUEST'}
+      </h4>
       <p className="font-medium">In this application you can:</p>
       <ul className="my-4 list-inside list-disc">
-        {isAdmin
+        {isAuthorized
           ? adminpPivileges.map(privilege => (
               <li key={privilege} className="mt-2">
                 {privilege}

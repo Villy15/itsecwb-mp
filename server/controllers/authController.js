@@ -80,13 +80,15 @@ export const login = async (req, res, next) => {
       req.session.user = {
         email: email,
         role: rows[0].role,
+        first_name: rows[0].first_name,
+        last_name: rows[0].last_name,
       };
 
       // save the session before sending the response
       // load does not happen before session is saved
       req.session.save(function (err) {
         if (err) return next(err);
-        console.log(req.session);
+        // console.log(req.session);
 
         res.status(200).json({ message: "User logged in successfully" });
       });
@@ -225,7 +227,7 @@ export const register = async (req, res, next) => {
       // load does not happen before session is saved
       req.session.save(function (err) {
         if (err) return next(err);
-        console.log(req.session.user);
+        // console.log(req.session.user);
 
         res.status(201).json({ message: "User registered successfully" });
       });
@@ -243,7 +245,7 @@ export const register = async (req, res, next) => {
  */
 export const checkAuth = async (req, res, next) => {
   try {
-    console.log(req.session);
+    // console.log(req.session);
 
     if (req.session.user) {
       if (req.session.user.role === "admin") {
@@ -251,6 +253,8 @@ export const checkAuth = async (req, res, next) => {
           message: "User is authenticated",
           authorized: true,
           isAdmin: true,
+          first_name: req.session.user.first_name,
+          last_name: req.session.user.last_name,
         });
       }
 
@@ -258,6 +262,8 @@ export const checkAuth = async (req, res, next) => {
         message: "User is authenticated",
         authorized: true,
         isAdmin: false,
+        first_name: req.session.user.first_name,
+        last_name: req.session.user.last_name,
       });
     }
 

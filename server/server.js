@@ -24,7 +24,7 @@ import errorHandler from "./middleware/error.js";
 import logger from "./middleware/logger.js";
 import notFound from "./middleware/not-found.js";
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 const app = express();
 
 // Middlewares
