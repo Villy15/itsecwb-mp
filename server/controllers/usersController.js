@@ -31,12 +31,12 @@ export const deleteUser = async (req, res, next) => {
       [id]
     );
 
-    // if (userExistsResult.length === 0) {
-    //   // If the user does not exist, throw an error
-    //   const error = new Error("User not found");
-    //   error.status = 404;
-    //   throw error;
-    // }
+    if (userExistsResult.length === 0) {
+      // If the user does not exist, throw an error
+      const error = new Error("User not found");
+      error.status = 404;
+      throw error;
+    }
 
     // If the user exists, proceed with deletion
     await pool.query("DELETE FROM users WHERE id = ?", [id]);

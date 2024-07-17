@@ -218,14 +218,15 @@ export const register = async (req, res, next) => {
       req.session.save(function (err) {
         if (err) return next(err);
 
-        return res.status(201).json({ message: "User registered successfully" });
+        return res
+          .status(201)
+          .json({ message: "User registered successfully" });
       });
     });
   } catch (err) {
     return next(err);
   }
 };
-
 
 /**
  * @desc Check authentication

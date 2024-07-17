@@ -9,7 +9,10 @@ const errorHandler = (err, req, res, next) => {
     if (process.env.DEBUG != "true") {
       res.status(err.status).json({ message: err.message });
     } else {
-      res.status(err.status).json({ message: err.message, stack: err.stack });
+      res.status(err.status).json({
+        message: err.message,
+        stackTrace: err.stack,
+      });
     }
   } else {
     if (process.env.DEBUG != "true") {

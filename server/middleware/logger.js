@@ -11,7 +11,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const logFolder = path.join(__dirname, "../logs");
 if (!fs.existsSync(logFolder)) {
   fs.mkdirSync(logFolder, { recursive: true });
-
 }
 
 // generate a filename based on the current date
@@ -26,18 +25,22 @@ const logger = (req, res, next) => {
   const start = Date.now();
 
   // finish event
-  res.on('finish', () => {
+  res.on("finish", () => {
     const duration = Date.now() - start;
     const methodColors = {
       GET: colors.green,
       POST: colors.blue,
       PUT: colors.yellow,
-      DELETE: colors.white,
+      DELETE: colors.red,
     };
     const color = methodColors[req.method] || colors.white;
     const timestamp = new Date().toISOString();
 
-    const logMessage = `[${timestamp}] - ${req.method} ${req.protocol}://${req.get("host")}${req.originalUrl} || STATUS CODE: ${res.statusCode} || RESPONSE TIME: ${duration}ms`;
+    const logMessage = `[${timestamp}] - ${req.method} ${
+      req.protocol
+    }://${req.get("host")}${req.originalUrl} || STATUS CODE: ${
+      res.statusCode
+    } || RESPONSE TIME: ${duration}ms`;
 
     console.log(color(logMessage));
 
@@ -54,7 +57,6 @@ const logger = (req, res, next) => {
     // );
   });
 
-  
   next();
 };
 
