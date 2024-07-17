@@ -74,6 +74,11 @@ app.use(
   })
 );
 
+// Ensure to enable 'trust proxy' if using a reverse proxy like Heroku
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1); // trust first proxy
+}
+
 // Static folder
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 
