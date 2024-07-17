@@ -133,6 +133,7 @@ export const useRegister = ({ mutationConfig }: UseRegisterOptions = {}) => {
 interface AuthResponse {
   authorized: boolean;
   isAdmin: boolean;
+  email: string;
   first_name: string;
   last_name: string;
 }

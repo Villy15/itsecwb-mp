@@ -25,11 +25,11 @@ const DashboardContent = () => {
   const adminpPivileges = [
     'Create discussions',
     'Edit discussions',
-
     'Delete discussions',
     'Comment on discussions',
     'Delete all comments',
     'View the Admin Page',
+    'Delete Users',
   ];
 
   const guestPrivileges = [

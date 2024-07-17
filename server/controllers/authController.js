@@ -210,6 +210,8 @@ export const register = async (req, res, next) => {
       req.session.user = {
         email: email,
         role: "guest",
+        first_name: first_name,
+        last_name: last_name,
       };
 
       // Save the session before sending the response
@@ -239,6 +241,7 @@ export const checkAuth = async (req, res, next) => {
           message: "User is authenticated",
           authorized: true,
           isAdmin: true,
+          email: req.session.user.email,
           first_name: req.session.user.first_name,
           last_name: req.session.user.last_name,
         });
@@ -248,6 +251,7 @@ export const checkAuth = async (req, res, next) => {
         message: "User is authenticated",
         authorized: true,
         isAdmin: false,
+        email: req.session.user.email,
         first_name: req.session.user.first_name,
         last_name: req.session.user.last_name,
       });
