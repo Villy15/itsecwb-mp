@@ -21,7 +21,6 @@ const logFileName = `${currentDateString}.log`;
 
 // create a file called access.txt
 const logFilePath = path.join(logFolder, logFileName);
-
 const logger = (req, res, next) => {
   const start = Date.now();
 
@@ -46,7 +45,6 @@ const logger = (req, res, next) => {
         console.error(err);
       }
     });
-
     // console.log(
     //   color(
     //     `${req.method} ${req.protocol}://${req.get("host")}${req.originalUrl}`
