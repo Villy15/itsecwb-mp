@@ -6,9 +6,19 @@ const errorHandler = (err, req, res, next) => {
   }
 
   if (err.status) {
-    res.status(err.status).json({ message: err.message });
+    if (process.env.DEBUG != "true") {
+      res.status(err.status).json({ message: err.message });
+    } else {
+      res.status(err.status).json({ message: err.message, stack: err.stack });
+    }
   } else {
-    res.status(500).json({ message: "Internal Server Error" });
+    if (process.env.DEBUG != "true") {
+      res.status(500).json({ message: "Internal Server Error" });
+    } else {
+      res
+        .status(500)
+        .json({ message: "Internal Server Error", stack: err.stack });
+    }
   }
 };
 
