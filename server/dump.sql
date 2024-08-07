@@ -1,10 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `itsecwb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `itsecwb`;
--- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: itsecwb
+-- Host: roundhouse.proxy.rlwy.net    Database: itsecwb
 -- ------------------------------------------------------
--- Server version	8.0.37
+-- Server version	8.4.0
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,6 +14,70 @@ USE `itsecwb`;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `comments`
+--
+
+DROP TABLE IF EXISTS `comments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `comments` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `discussion_id` int NOT NULL,
+  `author_id` int NOT NULL,
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `enabled` tinyint NOT NULL DEFAULT '1',
+  `disabled_date` datetime DEFAULT NULL,
+  `comment_body` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `author_id_idx` (`author_id`),
+  KEY `discussion_id_idx` (`discussion_id`),
+  CONSTRAINT `author_id_1` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `discussion_id` FOREIGN KEY (`discussion_id`) REFERENCES `discussions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comments`
+--
+
+LOCK TABLES `comments` WRITE;
+/*!40000 ALTER TABLE `comments` DISABLE KEYS */;
+/*!40000 ALTER TABLE `comments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `discussions`
+--
+
+DROP TABLE IF EXISTS `discussions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `discussions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `discussion_title` varchar(100) NOT NULL,
+  `discussion_body` varchar(2000) NOT NULL,
+  `author_id` int NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `latest_update` datetime DEFAULT NULL,
+  `enable` tinyint NOT NULL DEFAULT '1',
+  `disabled_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `author_id_idx` (`author_id`),
+  CONSTRAINT `author_id` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `discussions`
+--
+
+LOCK TABLES `discussions` WRITE;
+/*!40000 ALTER TABLE `discussions` DISABLE KEYS */;
+INSERT INTO `discussions` VALUES (5,'Test title','Test bodayyy',98,'2021-09-01 00:00:00','2021-09-01 00:00:00',1,NULL);
+/*!40000 ALTER TABLE `discussions` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `users`
@@ -38,7 +100,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -47,7 +109,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (95,'adrianvill0a7@gmail.com','$2b$10$xPmqTyLPNBosz5aPfo7Nwu8R.TAKQZs81hET94YGcGORGVfoxWW9a','guest','Adrian','Villanueva','http://localhost:8000/assets/AFAC (square).png','09151944467','2024-06-10 10:22:56',1),(96,'adrianvill07@gmail.com','$2b$10$OIyE7u5WBUTdpdsv4FcZ7.tPAT1UtLEuC.RIJczuXkR/htUzG/G9.','guest','Adrian John','Villanueva','http://localhost:8000/assets/AFAC (square).png','123132131','2024-06-10 10:46:19',1);
+INSERT INTO `users` VALUES (98,'admin@gmail.com','$2b$10$8sFWhOut3iylfUTFEmqyZOA8zbN43SJm/uO7EKtTAXJcuP4fORI8K','admin','Admin','Admin','https://itsecwb-mp-express.onrender.com/assets/AFAC (square).png','09151944467','2024-06-15 07:58:49',1),(107,'anthonypaguio@gmail.com','$2b$10$rnCyk0G9jkmCdt5rlZonROBvSKjSd3TPh2tGDA1go/SVVJ8AVen.m','guest','Anthony','Paguio','https://itsecwb-mp-express.onrender.com/assets/anthoyn.jpg','09151944467','2024-07-16 05:10:13',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -60,4 +122,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-10 18:46:58
+-- Dump completed on 2024-08-07 15:02:26
