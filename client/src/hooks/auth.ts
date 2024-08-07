@@ -136,6 +136,7 @@ interface AuthResponse {
   email: string;
   first_name: string;
   last_name: string;
+  id: number;
 }
 
 export const checkAuth = (): Promise<AuthResponse> => {

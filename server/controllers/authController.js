@@ -82,6 +82,7 @@ export const login = async (req, res, next) => {
         role: rows[0].role,
         first_name: rows[0].first_name,
         last_name: rows[0].last_name,
+        id: rows[0].id,
       };
 
       // save the session before sending the response
@@ -199,7 +200,7 @@ export const register = async (req, res, next) => {
     // Hashes the password
     const hash = await bcrypt.hash(req.body.password, 10);
 
-    await pool.query(
+    const [result] = await pool.query(
       "INSERT INTO users (email, password, first_name, last_name, photo_url, phone) VALUES (?, ?, ?, ?, ?, ?)",
       [email, hash, first_name, last_name, photo_url, convertedPhone]
     );
@@ -212,6 +213,7 @@ export const register = async (req, res, next) => {
         role: "guest",
         first_name: first_name,
         last_name: last_name,
+        id: result.insertId,
       };
 
       // Save the session before sending the response
@@ -245,6 +247,7 @@ export const checkAuth = async (req, res, next) => {
           email: req.session.user.email,
           first_name: req.session.user.first_name,
           last_name: req.session.user.last_name,
+          id: req.session.user.id,
         });
       }
 
@@ -255,6 +258,7 @@ export const checkAuth = async (req, res, next) => {
         email: req.session.user.email,
         first_name: req.session.user.first_name,
         last_name: req.session.user.last_name,
+        id: req.session.user.id,
       });
     }
 
