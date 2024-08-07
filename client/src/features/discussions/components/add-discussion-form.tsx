@@ -1,35 +1,63 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAddDiscussion } from '../api/discussions';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 
-const AddDisucssionForm = () => {
-  const [discussion_title, setTitle] = useState('');
-  const [discussion_body, setBody] = useState('');
+import { useCheckAuth } from '@/hooks/auth';
 
-  const navigate = useNavigate();
+const AddDisucssionForm = () => {
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+
+  const addDiscussionMutation = useAddDiscussion();
+
+  // Auth
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  const {
+    isPending: isAuthPending,
+    isError: isAuthError,
+    data: authResponse,
+    error: authError,
+  } = useCheckAuth();
+
+  useEffect(() => {
+    if (authResponse) {
+      if (authResponse.authorized && authResponse.isAdmin) {
+        setIsAuthorized(true);
+      } else {
+        setIsAuthorized(false);
+      }
+    }
+  }, [authResponse]);
+
+  if (isAuthPending) {
+    return <p>Loading...</p>;
+  }
+
+  if (isAuthError) {
+    return <p>Error: {authError?.message}</p>;
+  }
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    
-    // Handle form submission here
-    console.log('Title:', discussion_title);
-    console.log('Body:', discussion_body);
+    if (!title || !body) {
+      toast.error('Please fill out all fields');
+      return;
+    }
 
-    toast.success('Discussion added sucessfully', {
-      dismissible: true,
-      cancel: {
-        label: 'Close',
-        onClick: () => {},
-      },
-      duration: 3000,
-      position: 'top-right',
+    if (!isAuthorized) {
+      toast.error('You are not authorized to create a discussion');
+      return;
+    }
+
+    addDiscussionMutation.mutate({
+      discussion_title: title,
+      discussion_body: body,
+      author_id: authResponse.id,
     });
-
-    // Redirect to discussions page
-    navigate('/discussions');
   };
 
   return (
@@ -43,7 +71,7 @@ const AddDisucssionForm = () => {
           type="text"
           placeholder="Enter Title"
           className="rounded border border-gray-200 p-2"
-          value={discussion_title}
+          value={title}
           onChange={e => setTitle(e.target.value)}
           name="discussion_title"
         />
@@ -55,7 +83,7 @@ const AddDisucssionForm = () => {
         <textarea
           placeholder="Enter Content"
           className="rounded border border-gray-200 p-2"
-          value={discussion_body}
+          value={body}
           rows={10}
           onChange={e => setBody(e.target.value)}
           name="discussion_body"
@@ -63,7 +91,9 @@ const AddDisucssionForm = () => {
         <p className="text-sm text-gray-500">
           Write a detailed description of your discussion
         </p>
-        <Button type="submit" className="w-1/4 min-w-min max-w-max">Create Discussion</Button>
+        <Button type="submit" className="w-1/4 min-w-min max-w-max">
+          Create Discussion
+        </Button>
       </form>
     </>
   );

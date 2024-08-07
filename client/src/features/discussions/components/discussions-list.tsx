@@ -3,17 +3,6 @@ import { Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,9 +14,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
-import { formatDate } from '@/utils/date-format';
 import { useDeleteDiscussion } from './delete-discussion';
+import { formatDate } from '@/utils/date-format';
 
 const DiscussionsList = () => {
   const deleteDiscussionMutation = useDeleteDiscussion();
@@ -56,36 +55,40 @@ const DiscussionsList = () => {
       </div>
     );
 
-    const AlertDialogDeleteUser = ({ id }: { id: string }) => {
-      return (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" icon={<Trash className="size-4" />}>
-              Delete
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete this
-                discussion.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => {
-                  deleteDiscussionMutation.mutate({ id: id });
-                }}
-              >
-                Continue
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      );
+  const AlertDialogDeleteUser = ({ id }: { id: string }) => {
+    const handleClick = () => {
+      deleteDiscussionMutation.mutate({ id: id });
     };
+
+    return (
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="destructive" icon={<Trash className="size-4" />}>
+            Delete
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              user.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                handleClick();
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  };
 
   return (
     <Table>
@@ -102,16 +105,17 @@ const DiscussionsList = () => {
           <TableRow
             key={data.id}
             className="cursor-pointer hover:bg-gray-100"
-          >
-            <TableCell className="font-medium" 
-              onClick={() => {
+            onClick={() => {
               navigate(`/discussions/${data.id}`);
             }}
-            >{data.discussion_title}</TableCell>
+          >
+            <TableCell className="font-medium">
+              {data.discussion_title}
+            </TableCell>
             <TableCell>{data.discussion_body}</TableCell>
             <TableCell>{formatDate(data.created_at)}</TableCell>
-            <TableCell>{data.author_id}</TableCell>
-            <TableCell>
+            <TableCell>{data.author_name ?? 'Join the id w name'}</TableCell>
+            <TableCell onClick={e => e.stopPropagation()}>
               <AlertDialogDeleteUser id={data.id} />
             </TableCell>
           </TableRow>

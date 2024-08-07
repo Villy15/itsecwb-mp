@@ -1,10 +1,9 @@
+import { getDicussionsQueryOptions } from '../api/discussions';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { api } from '@/lib/api-client';
 import { MutationConfig, queryClient } from '@/lib/react-query';
-
-import { getDicussionsQueryOptions } from '../api/discussions';
 
 /**
  * Delete User

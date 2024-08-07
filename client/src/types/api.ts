@@ -22,6 +22,8 @@ export type Discussion = Entity<{
   discussion_title: string;
   discussion_body: string;
   author_id: string;
+  // SOMETIMES I WANT TO GET THE AUTHOR NAME
+  author_name?: string;
 }>;
 
 export type Comment = Entity<{
