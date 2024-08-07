@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `itsecwb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `itsecwb`;
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
 -- Host: roundhouse.proxy.rlwy.net    Database: itsecwb
@@ -28,7 +26,7 @@ CREATE TABLE `comments` (
   `comment_id` int NOT NULL AUTO_INCREMENT,
   `discussion_id` int NOT NULL,
   `author_id` int NOT NULL,
-  `created_date` datetime NOT NULL,
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `enabled` tinyint NOT NULL DEFAULT '1',
   `disabled_date` datetime DEFAULT NULL,
   `comment_body` varchar(100) NOT NULL,
@@ -61,7 +59,7 @@ CREATE TABLE `discussions` (
   `discussion_title` varchar(100) NOT NULL,
   `discussion_body` varchar(2000) NOT NULL,
   `author_id` int NOT NULL,
-  `created_at` datetime NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `latest_update` datetime DEFAULT NULL,
   `enable` tinyint NOT NULL DEFAULT '1',
   `disabled_date` datetime DEFAULT NULL,
@@ -124,4 +122,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-07 14:07:50
+-- Dump completed on 2024-08-07 14:18:11
