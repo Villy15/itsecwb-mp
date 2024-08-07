@@ -12,29 +12,21 @@ import ViewDiscussion from '@/features/discussions/components/view-discussion';
 function ReadDiscussionPage() {
   const [didCreateComment, setDidCreateComment] = useState(false);
 
-  const comments = [
-    {
-      id: 1,
-      body: 'I love sir mantua! he the best!',
-      createdAt: 'June 18, 2024 5:27 PM',
-      createdBy: 'Adrian Villanueva',
-    },
-  ];
-
   return (
     // <ContentLayout title="Sample Discussion 1">
-    <ContentLayout title="View Discussion">
-      <ViewDiscussion />
+    <ContentLayout title="View Discussion and Comments">
 
-      {/* <div className="flex justify-end">
+
+      <div className="flex justify-end">
         <UpdateDiscussion />
       </div>
       <div className="mt-4">
-        <h2 className="text-l font-semibold">Discussion Body</h2>
+        <h2 className="text-l font-semibold">Discussion Post</h2>
         <div className="mt-4 rounded-lg bg-white shadow">
           <div className="p-6">I love sir mantua! he the best!</div>
         </div>
-      </div> */}
+      </div>
+      <ViewDiscussion />
       {didCreateComment ? null : (
         <div className="mt-4 flex justify-end">
           <Button

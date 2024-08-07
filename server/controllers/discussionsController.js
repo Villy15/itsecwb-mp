@@ -5,7 +5,7 @@ import { pool } from "../db.js";
  */
 export const getDiscussions = async (req, res, next) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM discussions");
+    const [rows] = await pool.query("SELECT * FROM discussions WHERE enable = 1");
     res.status(200).json(rows);
   } catch (err) {
     const error = new Error(err.message);
@@ -61,9 +61,36 @@ export const addDiscussion = async (req, res, next) => {
   }
 };
 
+// Doesnt actually delete, but just like make the enable to "0"
+export const removeDiscussion = async (req, res, next) => {
+  if (req.session.user.role !== "admin") {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  else{
+    try {
+      const { id } = req.params;
+
+      await pool.query("UPDATE discussions SET enable = 0 WHERE id = ?", [id]);
+
+      res.status(200).json({ message: "Discussion deleted successfully" });
+      
+    } catch (err) {
+      console.log("Error:", err.message);
+      const error = new Error(err.message);
+      error.status = 400;
+      return next(error);
+    }
+  }
+};
+
 export const getComments = async (req, res, next) => {
   try {
     const [rows] = await pool.query("SELECT * FROM comments");
+    // const [rows] = await pool.query(
+    //   "SELECT * FROM comments WHERE id = ?",
+    //   [id]
+    // );
+    
     res.status(200).json(rows);
 
   } catch (err) {

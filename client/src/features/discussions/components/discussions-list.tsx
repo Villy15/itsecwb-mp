@@ -14,9 +14,24 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+
 import { formatDate } from '@/utils/date-format';
+import { useDeleteDiscussion } from './delete-discussion';
 
 const DiscussionsList = () => {
+  const deleteDiscussionMutation = useDeleteDiscussion();
+
   const { data, isLoading, isError, error } = useGetDiscussions();
 
   const navigate = useNavigate();
@@ -41,6 +56,37 @@ const DiscussionsList = () => {
       </div>
     );
 
+    const AlertDialogDeleteUser = ({ id }: { id: string }) => {
+      return (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" icon={<Trash className="size-4" />}>
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete this
+                user.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  deleteDiscussionMutation.mutate({ id: id });
+                }}
+              >
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      );
+    };
+
   return (
     <Table>
       <TableHeader>
@@ -55,34 +101,18 @@ const DiscussionsList = () => {
         {data.map(data => (
           <TableRow
             key={data.id}
-            onClick={() => {
-              navigate(`/discussions/${data.id}`);
-            }}
             className="cursor-pointer hover:bg-gray-100"
           >
-            <TableCell className="font-medium">{data.discussion_title}</TableCell>
+            <TableCell className="font-medium" 
+              onClick={() => {
+              navigate(`/discussions/${data.id}`);
+            }}
+            >{data.discussion_title}</TableCell>
             <TableCell>{data.discussion_body}</TableCell>
             <TableCell>{formatDate(data.created_at)}</TableCell>
             <TableCell>{data.author_id}</TableCell>
             <TableCell>
-              <Button
-                onClick={event => {
-                  event.stopPropagation(); // Prevent row click
-                  toast.error('Delete not implemented', {
-                    dismissible: true,
-                    cancel: {
-                      label: 'Close',
-                      onClick: () => {},
-                    },
-                    duration: 3000,
-                    position: 'top-right',
-                  });
-                }}
-                variant="destructive"
-                icon={<Trash className="size-4" />}
-              >
-                Delete
-              </Button>
+              <AlertDialogDeleteUser id={data.id} />
             </TableCell>
           </TableRow>
         ))}

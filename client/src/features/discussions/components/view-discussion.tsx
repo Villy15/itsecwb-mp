@@ -1,7 +1,5 @@
-import { useGetComments } from '../api/discussions';
+import { useGetComments, useGetDiscussions } from '../api/discussions';
 import { Trash } from 'lucide-react';
-// import { useNavigate } from 'react-router-dom';
-// import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -10,8 +8,6 @@ import { formatDate } from '@/utils/date-format';
 
 const CommentsList = () => {
   const { data, isLoading, isError, error } = useGetComments();
-
-//   const navigate = useNavigate();
 
   if (isLoading) {
     return (
