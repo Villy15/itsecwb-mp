@@ -32,6 +32,7 @@ export const useGetDiscussions = ({
   });
 };
 
+
 // Adding a disc
 export const addDiscussion = (discussion: { discussion_title: string; discussion_body: string; author_id: number; }): Promise<void> => {
   return api.post('/api/discussions/add', discussion);

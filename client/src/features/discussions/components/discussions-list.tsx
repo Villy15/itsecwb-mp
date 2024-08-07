@@ -69,7 +69,7 @@ const DiscussionsList = () => {
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete this
-                user.
+                discussion.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

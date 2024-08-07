@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 
 import CreateCommentForm from '@/features/discussions/components/create-comment-form';
 import UpdateDiscussion from '@/features/discussions/components/update-discussion';
+import ViewComments from '@/features/discussions/components/view-comments';
 import ViewDiscussion from '@/features/discussions/components/view-discussion';
 
 
@@ -20,13 +21,8 @@ function ReadDiscussionPage() {
       <div className="flex justify-end">
         <UpdateDiscussion />
       </div>
-      <div className="mt-4">
-        <h2 className="text-l font-semibold">Discussion Post</h2>
-        <div className="mt-4 rounded-lg bg-white shadow">
-          <div className="p-6">I love sir mantua! he the best!</div>
-        </div>
-      </div>
       <ViewDiscussion />
+      <ViewComments />
       {didCreateComment ? null : (
         <div className="mt-4 flex justify-end">
           <Button
