@@ -23,18 +23,18 @@ DROP TABLE IF EXISTS `comments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `comments` (
-  `comment_id` int NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `discussion_id` int NOT NULL,
   `author_id` int NOT NULL,
   `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `enabled` tinyint NOT NULL DEFAULT '1',
   `disabled_date` datetime DEFAULT NULL,
   `comment_body` varchar(100) NOT NULL,
-  PRIMARY KEY (`comment_id`),
+  PRIMARY KEY (`id`),
   KEY `author_id_idx` (`author_id`),
   KEY `discussion_id_idx` (`discussion_id`),
   CONSTRAINT `author_id_1` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `discussion_id` FOREIGN KEY (`discussion_id`) REFERENCES `discussions` (`discussion_id`)
+  CONSTRAINT `discussion_id` FOREIGN KEY (`discussion_id`) REFERENCES `discussions` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -55,7 +55,7 @@ DROP TABLE IF EXISTS `discussions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `discussions` (
-  `discussion_id` int NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `discussion_title` varchar(100) NOT NULL,
   `discussion_body` varchar(2000) NOT NULL,
   `author_id` int NOT NULL,
@@ -63,10 +63,10 @@ CREATE TABLE `discussions` (
   `latest_update` datetime DEFAULT NULL,
   `enable` tinyint NOT NULL DEFAULT '1',
   `disabled_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`discussion_id`),
+  PRIMARY KEY (`id`),
   KEY `author_id_idx` (`author_id`),
   CONSTRAINT `author_id` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75,7 +75,7 @@ CREATE TABLE `discussions` (
 
 LOCK TABLES `discussions` WRITE;
 /*!40000 ALTER TABLE `discussions` DISABLE KEYS */;
-INSERT INTO `discussions` VALUES (1,'Test title','Test body',98,'2021-09-01 00:00:00','2021-09-01 00:00:00',1,NULL);
+INSERT INTO `discussions` VALUES (5,'Test title','Test bodayyy',98,'2021-09-01 00:00:00','2021-09-01 00:00:00',1,NULL);
 /*!40000 ALTER TABLE `discussions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -122,4 +122,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-07 14:18:11
+-- Dump completed on 2024-08-07 15:02:26
