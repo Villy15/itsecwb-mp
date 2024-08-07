@@ -5,16 +5,18 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
 const AddDisucssionForm = () => {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
+  const [discussion_title, setTitle] = useState('');
+  const [discussion_body, setBody] = useState('');
 
   const navigate = useNavigate();
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+
+    
     // Handle form submission here
-    console.log('Title:', title);
-    console.log('Body:', body);
+    console.log('Title:', discussion_title);
+    console.log('Body:', discussion_body);
 
     toast.success('Discussion added sucessfully', {
       dismissible: true,
@@ -36,32 +38,32 @@ const AddDisucssionForm = () => {
         className="mb-4 flex w-6/12 flex-col space-y-4"
         onSubmit={handleSubmit}
       >
-        <label htmlFor="title">Title</label>
+        <label htmlFor="discussion_title">Title</label>
         <input
           type="text"
-          placeholder="Sir mantua is the best!!"
+          placeholder="Enter Title"
           className="rounded border border-gray-200 p-2"
-          value={title}
+          value={discussion_title}
           onChange={e => setTitle(e.target.value)}
-          name="title"
+          name="discussion_title"
         />
         <p className="text-sm text-gray-500">
           Create a title for your discussione
         </p>
 
-        <label htmlFor="body">Body</label>
+        <label htmlFor="discussion_body">Body</label>
         <textarea
-          placeholder="Best professor ever woooho!"
+          placeholder="Enter Content"
           className="rounded border border-gray-200 p-2"
-          value={body}
+          value={discussion_body}
           rows={10}
           onChange={e => setBody(e.target.value)}
-          name="body"
+          name="discussion_body"
         />
         <p className="text-sm text-gray-500">
           Write a detailed description of your discussion
         </p>
-        <Button className="w-1/4 min-w-min max-w-max">Create Discussion</Button>
+        <Button type="submit" className="w-1/4 min-w-min max-w-max">Create Discussion</Button>
       </form>
     </>
   );

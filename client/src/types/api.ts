@@ -19,7 +19,7 @@ export type User = Entity<{
 }>;
 
 export type Discussion = Entity<{
-  title: string;
-  description: string;
+  discussion_title: string;
+  discussion_body: string;
   author_id: string;
 }>;
