@@ -1,8 +1,9 @@
+import { useAddDiscussion } from '../api/discussions';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { useAddDiscussion } from '../api/discussions';
+
 import { useCheckAuth } from '@/hooks/auth';
 
 const AddDisucssionForm = () => {
@@ -38,8 +39,6 @@ const AddDisucssionForm = () => {
   if (isAuthError) {
     return <p>Error: {authError?.message}</p>;
   }
-  
-
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -59,7 +58,6 @@ const AddDisucssionForm = () => {
       discussion_body: body,
       author_id: authResponse.id,
     });
-   
   };
 
   return (
@@ -93,7 +91,9 @@ const AddDisucssionForm = () => {
         <p className="text-sm text-gray-500">
           Write a detailed description of your discussion
         </p>
-        <Button type="submit" className="w-1/4 min-w-min max-w-max">Create Discussion</Button>
+        <Button type="submit" className="w-1/4 min-w-min max-w-max">
+          Create Discussion
+        </Button>
       </form>
     </>
   );

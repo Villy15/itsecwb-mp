@@ -1,11 +1,11 @@
 import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
-
-import { api } from '@/lib/api-client';
-import { MutationConfig, queryClient, QueryConfig } from '@/lib/react-query';
-
-import { Discussion, Comment } from '@/types/api';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+
+import { api } from '@/lib/api-client';
+import { MutationConfig, QueryConfig, queryClient } from '@/lib/react-query';
+
+import { Comment, Discussion } from '@/types/api';
 
 /**
  * Get api data
@@ -34,6 +34,30 @@ export const useGetDiscussions = ({
   });
 };
 
+// Read 1 discussion
+export const getDiscussion = (id: number): Promise<Discussion> => {
+  console.log("ID: ", id);
+  return api.get(`/api/discussions/${id}`);
+};
+
+export const getDiscussionQueryOptions = (id: number) => {
+  return queryOptions({
+    queryKey: ['discussion', id],
+    queryFn: () => getDiscussion(id),
+  });
+};
+
+type UseGetDiscussionOptions = {
+  id: number;
+  queryConfig?: QueryConfig<typeof getDiscussionQueryOptions>;
+};
+
+export const useGetDiscussion = ({ id, queryConfig }: UseGetDiscussionOptions) => {
+  return useQuery({
+    ...getDiscussionQueryOptions(id),
+    ...queryConfig,
+  });
+};
 // Adding a disc
 interface AddDiscussionParams {
   discussion_title: string;
@@ -49,7 +73,9 @@ type UseAddDiscussionOptions = {
   mutationConfig?: MutationConfig<typeof addDiscussion>;
 };
 
-export const useAddDiscussion = ({mutationConfig} : UseAddDiscussionOptions = {}) => {
+export const useAddDiscussion = ({
+  mutationConfig,
+}: UseAddDiscussionOptions = {}) => {
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   const navigate = useNavigate();
@@ -69,12 +95,12 @@ export const useAddDiscussion = ({mutationConfig} : UseAddDiscussionOptions = {}
         duration: 3000,
         position: 'top-right',
       });
-      
+
       navigate('/discussions');
 
       onSuccess?.(...args);
     },
-    onError: (error) => {
+    onError: error => {
       toast.error('Error deleting user', {
         dismissible: true,
         cancel: {
@@ -87,9 +113,9 @@ export const useAddDiscussion = ({mutationConfig} : UseAddDiscussionOptions = {}
       });
     },
     ...restConfig,
-    mutationFn:  addDiscussion,
+    mutationFn: addDiscussion,
   });
-}
+};
 
 // Getting comments
 export const getComments = (): Promise<Comment[]> => {
@@ -107,9 +133,7 @@ type UseGetCommentsOptions = {
   queryConfig?: QueryConfig<typeof getCommentsQueryOptions>;
 };
 
-export const useGetComments = ({
-  queryConfig,
-}: UseGetCommentsOptions = {}) => {
+export const useGetComments = ({ queryConfig }: UseGetCommentsOptions = {}) => {
   return useQuery({
     ...getCommentsQueryOptions(),
     ...queryConfig,
