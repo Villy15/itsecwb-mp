@@ -7,18 +7,6 @@ export const getDiscussions = async (req, res, next) => {
   try {
     const [rows] = await pool.query("SELECT * FROM discussions");
     res.status(200).json(rows);
-
-    // sample rows
-    // const rows = [
-    //   {
-    //     id: 1,
-    //     created_at: "2021-09-01T00:00:00.000Z",
-    //     discussion_title: "Sample Discussion 1",
-    //     discussion_body: "Sample Description 1",
-    //     author_id: "Adrian Villanueva",
-    //   },
-    // ];
-    // res.status(200).json(rows);
   } catch (err) {
     const error = new Error(err.message);
     error.status = 400;
@@ -53,11 +41,9 @@ export const addDiscussion = async (req, res, next) => {
     }
     
     const [result] = await pool.query(
-      "INSERT INTO discussions (discussion_title, discussion_body, author_id, created_at) VALUES (?, ?, ?, NOW())",
+      "INSERT INTO discussions (discussion_title, discussion_body, author_id, created_at, latest_update) VALUES (?, ?, ?, NOW(), NOW())",
       [discussion_title, discussion_body, author_id]
     );
-
-    console.log(result);
 
     res.status(201).json({
       id: result.insertId,
@@ -74,3 +60,16 @@ export const addDiscussion = async (req, res, next) => {
     return next(error);
   }
 };
+
+export const getComments = async (req, res, next) => {
+  try {
+    const [rows] = await pool.query("SELECT * FROM comments");
+    res.status(200).json(rows);
+
+  } catch (err) {
+    const error = new Error(err.message);
+    error.status = 400;
+    return next(error);
+  }
+};
+

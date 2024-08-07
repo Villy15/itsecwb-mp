@@ -23,3 +23,10 @@ export type Discussion = Entity<{
   discussion_body: string;
   author_id: string;
 }>;
+
+export type Comment = Entity<{
+  discussion_id: number;
+  comment_body: string;
+  author_id: string;
+  created_date: number;
+}>;

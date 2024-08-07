@@ -61,7 +61,7 @@ const DiscussionsList = () => {
             className="cursor-pointer hover:bg-gray-100"
           >
             <TableCell className="font-medium">{data.discussion_title}</TableCell>
-            <TableCell>{data.discussion_title}</TableCell>
+            <TableCell>{data.discussion_body}</TableCell>
             <TableCell>{formatDate(data.created_at)}</TableCell>
             <TableCell>{data.author_id}</TableCell>
             <TableCell>
