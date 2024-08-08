@@ -1,7 +1,6 @@
 import { useGetDiscussions } from '../api/discussions';
 import { Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 
 import {
   AlertDialog,
