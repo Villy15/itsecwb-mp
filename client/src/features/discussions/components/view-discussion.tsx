@@ -1,10 +1,12 @@
-import { useGetDiscussions } from '../api/discussions';
+import { Button } from '@/components/ui/button';
+import { useGetComments } from '../api/discussions';
 import { Spinner } from '@/components/ui/spinner';
 
 import { formatDate } from '@/utils/date-format';
+import { Trash } from 'lucide-react';
 
 const SelectedDiscussion = () => {
-  const { data, isLoading, isError, error } = useGetDiscussions();
+  const { data, isLoading, isError, error } = useGetComments();
 
   if (isLoading) {
     return (
