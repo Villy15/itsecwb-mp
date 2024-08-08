@@ -7,6 +7,7 @@ import axios from "axios";
 
 // create a __dirname variable to store the current directory
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const apiUrl = process.env.NODE_ENV === "production" ? process.env.PROD_API_LOGGER : "http://localhost:8001";
 
 // create a folder called logs
 const logFolder = path.join(__dirname, "../logs");
@@ -50,7 +51,7 @@ const logger = (req, res, next) => {
       }
     });
 
-    axios.post('http://localhost:8001/log', {
+    axios.post(`${apiUrl}/log`, {
       logMessage: logMessage
     })
       .then((response) => console.log('Log sent to logging server.', response.data))
