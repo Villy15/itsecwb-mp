@@ -24,7 +24,7 @@ const AddDisucssionForm = () => {
 
   useEffect(() => {
     if (authResponse) {
-      if (authResponse.authorized && authResponse.isAdmin) {
+      if (authResponse.authorized) {
         setIsAuthorized(true);
       } else {
         setIsAuthorized(false);
@@ -47,6 +47,8 @@ const AddDisucssionForm = () => {
       toast.error('Please fill out all fields');
       return;
     }
+
+    console.log(isAuthorized);
 
     if (!isAuthorized) {
       toast.error('You are not authorized to create a discussion');

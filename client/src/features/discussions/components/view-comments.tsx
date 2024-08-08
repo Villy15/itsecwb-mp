@@ -1,11 +1,12 @@
-import { Button } from '@/components/ui/button';
 import { useGetComments } from '../api/discussions';
+import { Trash } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 
 import { formatDate } from '@/utils/date-format';
-import { Trash } from 'lucide-react';
 
-const SelectedDiscussion = () => {
+const CommentsList = () => {
   const { data, isLoading, isError, error } = useGetComments();
 
   if (isLoading) {
@@ -23,7 +24,7 @@ const SelectedDiscussion = () => {
   if (!data)
     return (
       <div className="flex h-80 flex-col items-center justify-center bg-slate-100 text-gray-500">
-        <p className="text-lg">No discussion loaded.</p>
+        <p className="text-lg">No comments found.</p>
       </div>
     );
 
@@ -50,4 +51,4 @@ const SelectedDiscussion = () => {
   );
 };
 
-export default SelectedDiscussion;
+export default CommentsList;
