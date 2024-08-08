@@ -17,6 +17,7 @@ import { __dirname } from "./utils/dirname.js";
 import auth from "./routes/auth.js";
 import discussions from "./routes/discussions.js";
 import users from "./routes/users.js";
+import comments from "./routes/comments.js";
 
 // Import middleware
 import fileUpload from "express-fileupload";
@@ -95,6 +96,7 @@ app.get("/api", (req, res) => {
 app.use("/api/users", users);
 app.use("/api/auth", auth);
 app.use("/api/discussions", discussions);
+app.use("/api/comments", comments);
 
 // Catch all error
 app.use(notFound);

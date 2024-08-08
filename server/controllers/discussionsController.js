@@ -173,22 +173,3 @@ export const removeDiscussion = async (req, res, next) => {
     return next(error);
   }
 };
-
-export const getComments = async (req, res, next) => {
-  try {
-    const [rows] = await pool.query("SELECT * FROM comments");
-
-    // const { id } = req.params;
-    // const [rows] = await pool.query(
-    //   "SELECT * FROM comments WHERE discussion_id = ?",
-    //   [id]
-    // );
-
-    res.status(200).json(rows);s
-  } catch (err) {
-    const error = new Error(err.message);
-    error.status = 400;
-    return next(error);
-  }
-};
-

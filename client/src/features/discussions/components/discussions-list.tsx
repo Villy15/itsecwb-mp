@@ -113,7 +113,7 @@ const DiscussionsList = () => {
             </TableCell>
             <TableCell>{data.discussion_body}</TableCell>
             <TableCell>{formatDate(data.created_at)}</TableCell>
-            <TableCell>{data.author_name ?? 'Join the id w name'}</TableCell>
+            <TableCell>{data.author_id}</TableCell>
             <TableCell onClick={e => e.stopPropagation()}>
               <AlertDialogDeleteUser id={data.id} />
             </TableCell>

@@ -86,6 +86,11 @@ export const useAddDiscussion = ({
         queryKey: getDicussionsQueryOptions().queryKey,
       });
 
+      // validate the discussion not discussions 
+      queryClient.invalidateQueries({
+        queryKey: ['discussion', ...args],
+      });
+
       toast.success('Discussion added sucessfully', {
         dismissible: true,
         cancel: {
@@ -117,25 +122,189 @@ export const useAddDiscussion = ({
   });
 };
 
-// Getting comments
-export const getComments = (): Promise<Comment[]> => {
-  return api.get('/api/discussions/:id');
+// Update discussion
+interface UpdateDiscussionParams {
+  discussion_title: string;
+  discussion_body: string;
+  author_id: number;
+}
+
+export const updateDiscussion = (discussion: UpdateDiscussionParams) => {
+  return api.patch(`/api/discussions/${discussion.author_id}`, discussion);
 };
 
-export const getCommentsQueryOptions = () => {
+type UseUpdateDiscussionOptions = {
+  mutationConfig?: MutationConfig<typeof updateDiscussion>;
+};
+
+export const useUpdateDiscussion = ({
+  mutationConfig,
+}: UseUpdateDiscussionOptions = {}) => {
+  const { onSuccess, ...restConfig } = mutationConfig || {};
+
+  const navigate = useNavigate();
+
+  return useMutation({
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({
+        queryKey: getDicussionsQueryOptions().queryKey,
+      });
+
+      toast.success('Discussion updated sucessfully', {
+        dismissible: true,
+        cancel: {
+          label: 'Close',
+          onClick: () => {},
+        },
+        duration: 3000,
+        position: 'top-right',
+      });
+
+      navigate('/discussions');
+
+      onSuccess?.(...args);
+    },
+    onError: error => {
+      toast.error('Error updating discussion', {
+        dismissible: true,
+        cancel: {
+          label: 'Close',
+          onClick: () => {},
+        },
+        duration: 3000,
+        description: error.message,
+        position: 'top-right',
+      });
+    },
+    ...restConfig,
+    mutationFn: updateDiscussion,
+  });
+};
+
+// Getting comments from a discussion id 
+export const getComments = (id: number): Promise<Comment[]> => {
+  return api.get(`/api/comments/${id}`);
+};
+
+export const getCommentsQueryOptions = (id: number) => {
   return queryOptions({
-    queryKey: ['comments'],
-    queryFn: () => getComments(),
+    queryKey: ['comments', id],
+    queryFn: () => getComments(id),
   });
 };
 
 type UseGetCommentsOptions = {
+  id: number;
   queryConfig?: QueryConfig<typeof getCommentsQueryOptions>;
 };
 
-export const useGetComments = ({ queryConfig }: UseGetCommentsOptions = {}) => {
+export const useGetComments = ({ id, queryConfig }: UseGetCommentsOptions) => {
   return useQuery({
-    ...getCommentsQueryOptions(),
+    ...getCommentsQueryOptions(id),
     ...queryConfig,
+  });
+};
+
+// Add comment to a discussion
+interface AddCommentParams {
+  comment_body: string;
+  author_id: number;
+  discussion_id: number;
+}
+
+export const addComment = (comment: AddCommentParams) => {
+  return api.post('/api/comments/add', comment);
+};
+
+type UseAddCommentOptions = {
+  mutationConfig?: MutationConfig<typeof addComment>;
+};
+
+export const useAddComment = ({
+  mutationConfig,
+}: UseAddCommentOptions = {}) => {
+  const { onSuccess, ...restConfig } = mutationConfig || {};
+
+  return useMutation({
+    onSuccess: (...args) => {
+      // queryClient.invalidateQueries({
+      //   queryKey: getCommentsQueryOptions().queryKey,
+      // });
+
+      toast.success('Comment added sucessfully', {
+        dismissible: true,
+        cancel: {
+          label: 'Close',
+          onClick: () => {},
+        },
+        duration: 3000,
+        position: 'top-right',
+      });
+
+      onSuccess?.(...args);
+    },
+    onError: error => {
+      toast.error('Error adding comment', {
+        dismissible: true,
+        cancel: {
+          label: 'Close',
+          onClick: () => {},
+        },
+        duration: 3000,
+        description: error.message,
+        position: 'top-right',
+      });
+    },
+    ...restConfig,
+    mutationFn: addComment,
+  });
+};
+
+// Delete a comment
+export const deleteComment = (id: number) => {
+  return api.post(`/api/comments/${id}`);
+};
+
+type UseDeleteCommentOptions = {
+  mutationConfig?: MutationConfig<typeof deleteComment>;
+};
+
+export const useDeleteComment = ({
+  mutationConfig,
+}: UseDeleteCommentOptions = {}) => {
+  const { onSuccess, ...restConfig } = mutationConfig || {};
+
+  return useMutation({
+    onSuccess: (...args) => {
+      // queryClient.invalidateQueries({
+      //   queryKey: getCommentsQueryOptions().queryKey,
+      // });
+
+      toast.success('Comment deleted sucessfully', {
+        dismissible: true,
+        cancel: {
+          label: 'Close',
+          onClick: () => {},
+        },
+        duration: 3000,
+        position: 'top-right',
+      });
+
+      onSuccess?.(...args);
+    },
+    onError: error => {
+      toast.error('Error deleting comment', {
+        dismissible: true,
+        cancel: {
+          label: 'Close',
+          onClick: () => {},
+        },
+        duration: 3000,
+        description: error.message,
+        position: 'top-right',
+      });
+    },
+    ...restConfig,
+    mutationFn: deleteComment,
   });
 };

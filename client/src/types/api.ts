@@ -26,9 +26,11 @@ export type Discussion = Entity<{
   author_name?: string;
 }>;
 
-export type Comment = Entity<{
+export type Comment = {
+  id: number;
   discussion_id: number;
-  comment_body: string;
-  author_id: string;
+  author_id: number;
   created_date: number;
-}>;
+  enabled: number;
+  comment_body: string;
+};
