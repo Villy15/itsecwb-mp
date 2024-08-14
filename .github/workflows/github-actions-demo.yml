@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Git
-        run: apt install git
+        run: sudo apt install git
       - name: Configure git user
         run: |
           git config --global user.name 'Github'
